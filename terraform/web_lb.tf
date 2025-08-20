@@ -85,13 +85,35 @@ resource "google_compute_global_forwarding_rule" "web_fwd" {
   ip_address            = google_compute_global_address.web_ip.address
 }
 
+# HTTP -> HTTPS redirect
+resource "google_compute_url_map" "web_map_http" {
+  name = "web-um-http-${terraform.workspace}"
+  default_url_redirect {
+    https_redirect = true
+    strip_query    = false
+  }
+}
+
+resource "google_compute_target_http_proxy" "web_proxy_http" {
+  name    = "web-thp-http-${terraform.workspace}"
+  url_map = google_compute_url_map.web_map_http.id
+}
+
+resource "google_compute_global_forwarding_rule" "web_fwd_80" {
+  name                  = "web-fr-80-${terraform.workspace}"
+  port_range            = "80"
+  ip_protocol           = "TCP"
+  target                = google_compute_target_http_proxy.web_proxy_http.id
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+  ip_address            = google_compute_global_address.web_ip.address
+}
+
 output "web_lb_ip" {
   value       = google_compute_global_address.web_ip.address
   description = "Global LB IPv4 to use for A records"
 }
 
-output "web_cert_status" {
-  value       = google_compute_managed_ssl_certificate.web_cert.managed[0].status
-  description = "Managed cert status (PROVISIONING until DNS is set)"
+output "web_cert_self_link" {
+  value       = google_compute_managed_ssl_certificate.web_cert.self_link
+  description = "Managed SSL cert self link"
 }
-

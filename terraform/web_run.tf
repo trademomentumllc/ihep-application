@@ -1,7 +1,19 @@
-variable "web_cpu" { type = string, default = "1" }
-variable "web_memory" { type = string, default = "512Mi" }
-variable "web_min_instances" { type = number, default = 0 }
-variable "web_max_instances" { type = number, default = 10 }
+variable "web_cpu" {
+  type    = string
+  default = "1"
+}
+variable "web_memory" {
+  type    = string
+  default = "512Mi"
+}
+variable "web_min_instances" {
+  type    = number
+  default = 0
+}
+variable "web_max_instances" {
+  type    = number
+  default = 10
+}
 
 resource "google_cloud_run_v2_service" "web" {
   name     = "web-${terraform.workspace}"
