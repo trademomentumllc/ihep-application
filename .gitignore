@@ -5,3 +5,21 @@ terraform.tfstate.backup
 **/.terraform/*
 *.tfstate
 *.tfstate.*
+# Dependencies
+/node_modules/
+
+# Logs
+/logs/
+*.log
+*.tar.gz
+
+# Backups
+/backups/
+/backup_debug/
+/terraform.zip
+
+# Local Config
+/.config/
+/.local/
+.replit
+cookies.txt
