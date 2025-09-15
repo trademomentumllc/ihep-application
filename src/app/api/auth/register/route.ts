@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import bcrypt from 'bcrypt'
-import { mockStore } from '../_mockStore'
+import { mockStore } from '@/lib/mockStore'
 
 const insertUserSchema = z.object({
   username: z.string().min(3),
