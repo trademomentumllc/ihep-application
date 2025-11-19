@@ -1,0 +1,45 @@
+name: CodeQL Analysis
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+concurrency:
+  group: codeql-${{ github.repository }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache CodeQL bundle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/codeql
+            ~/.config/codeql
+          key: codeql-bundle-${{ runner.os }}-${{ hashFiles('**/package-lock.json','**/yarn.lock','**/pnpm-lock.yaml') }}
+          restore-keys: |
+            codeql-bundle-${{ runner.os }}-
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          token: ${{ secrets.CODEQL_TOKEN }}
+          languages: javascript,python
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          token: ${{ secrets.CODEQL_TOKEN }}
+          upload: true
