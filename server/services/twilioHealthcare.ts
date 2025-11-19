@@ -1,6 +1,6 @@
 /**
  * Twilio Healthcare Services Integration
- * 
+ *
  * This service implements advanced healthcare-specific Twilio services including:
  * 1. Twilio Engage for Healthcare - Patient engagement and reminders
  * 2. Twilio Verify for Healthcare - Enhanced identity verification
@@ -13,6 +13,12 @@ import { db } from '../db';
 import { createInsertSchema } from 'drizzle-zod';
 import { sendSMS } from './sms';
 import * as gamificationService from './gamification';
+import { createHash } from 'crypto';
+
+// Utility function to hash sensitive data for logging
+function hashSensitiveData(data: string | number): string {
+  return createHash('sha256').update(String(data)).digest('hex').substring(0, 8);
+}
 
 // Initialize Twilio client
 const getTwilioClient = () => {
@@ -102,7 +108,8 @@ export async function sendMedicationAdherenceReminder(
     if (!isTwilioConfigured()) {
       // Use mock SMS if Twilio is not configured
       const success = await sendSMS(phoneNumber, message);
-      console.log(`[MOCK ADHERENCE REMINDER] To: ${phoneNumber}, Tracking ID: ${trackingId}, Success: ${success}`);
+      const phoneHash = hashSensitiveData(phoneNumber);
+      console.log(`[MOCK ADHERENCE REMINDER] To hash: ${phoneHash}, Tracking ID: ${trackingId}, Success: ${success}`);
       
       return {
         success,
@@ -122,7 +129,8 @@ export async function sendMedicationAdherenceReminder(
     
     // Store the reminder in our database for tracking
     // This would connect to our gamification system when the user confirms
-    console.log(`[ADHERENCE REMINDER] SID: ${twilioMessage.sid}, To: ${phoneNumber}, Tracking ID: ${trackingId}`);
+    const phoneHash = hashSensitiveData(phoneNumber);
+    console.log(`[ADHERENCE REMINDER] SID: ${twilioMessage.sid}, To hash: ${phoneHash}, Tracking ID: ${trackingId}`);
     
     return {
       success: true,
@@ -178,7 +186,8 @@ export async function sendSmartAppointmentReminder(
     if (!isTwilioConfigured()) {
       // Use mock SMS if Twilio is not configured
       const success = await sendSMS(phoneNumber, message);
-      console.log(`[MOCK APPOINTMENT REMINDER] To: ${phoneNumber}, Appointment ID: ${appointmentId}, Tracking ID: ${trackingId}, Success: ${success}`);
+      const phoneHash = hashSensitiveData(phoneNumber);
+      console.log(`[MOCK APPOINTMENT REMINDER] To hash: ${phoneHash}, Appointment ID: ${appointmentId}, Tracking ID: ${trackingId}, Success: ${success}`);
       
       return {
         success,
@@ -196,7 +205,8 @@ export async function sendSmartAppointmentReminder(
       statusCallback: `${process.env.SERVER_URL || 'http://localhost:5000'}/api/twilio/status-callback?userId=${userId}&appointmentId=${appointmentId}&trackingId=${trackingId}&type=appointment`
     });
     
-    console.log(`[APPOINTMENT REMINDER] SID: ${twilioMessage.sid}, To: ${phoneNumber}, Appointment ID: ${appointmentId}, Tracking ID: ${trackingId}`);
+    const phoneHash = hashSensitiveData(phoneNumber);
+    console.log(`[APPOINTMENT REMINDER] SID: ${twilioMessage.sid}, To hash: ${phoneHash}, Appointment ID: ${appointmentId}, Tracking ID: ${trackingId}`);
     
     return {
       success: true,
@@ -241,7 +251,8 @@ export async function sendHealthEducationReminder(
     if (!isTwilioConfigured()) {
       // Use mock SMS if Twilio is not configured
       const success = await sendSMS(phoneNumber, message);
-      console.log(`[MOCK EDUCATION REMINDER] To: ${phoneNumber}, Content ID: ${contentId}, Tracking ID: ${trackingId}, Success: ${success}`);
+      const phoneHash = hashSensitiveData(phoneNumber);
+      console.log(`[MOCK EDUCATION REMINDER] To hash: ${phoneHash}, Content ID: ${contentId}, Tracking ID: ${trackingId}, Success: ${success}`);
       
       return {
         success,
@@ -259,7 +270,8 @@ export async function sendHealthEducationReminder(
       statusCallback: `${process.env.SERVER_URL || 'http://localhost:5000'}/api/twilio/status-callback?userId=${userId}&contentId=${contentId}&trackingId=${trackingId}&type=education`
     });
     
-    console.log(`[EDUCATION REMINDER] SID: ${twilioMessage.sid}, To: ${phoneNumber}, Content ID: ${contentId}, Tracking ID: ${trackingId}`);
+    const phoneHash = hashSensitiveData(phoneNumber);
+    console.log(`[EDUCATION REMINDER] SID: ${twilioMessage.sid}, To hash: ${phoneHash}, Content ID: ${contentId}, Tracking ID: ${trackingId}`);
     
     return {
       success: true,
@@ -295,7 +307,8 @@ export async function initiateEnhancedVerification(
 }> {
   try {
     if (!isVerifyConfigured()) {
-      console.log(`[MOCK ENHANCED VERIFICATION] Starting verification for user ${userId} via ${channel}`);
+      const userHash = hashSensitiveData(userId);
+      console.log(`[MOCK ENHANCED VERIFICATION] Starting verification for user hash ${userHash} via ${channel}`);
       
       // Generate mock verification ID
       const verificationId = `mock-verify-${uuidv4().substring(0, 8)}`;
@@ -327,8 +340,9 @@ export async function initiateEnhancedVerification(
         to: channel === 'email' ? email! : phoneNumber,
         channel
       });
-    
-    console.log(`[ENHANCED VERIFICATION] SID: ${verification.sid}, To: ${channel === 'email' ? email : phoneNumber}, Status: ${verification.status}`);
+
+    const toHash = hashSensitiveData(channel === 'email' ? email! : phoneNumber);
+    console.log(`[ENHANCED VERIFICATION] SID: ${verification.sid}, To hash: ${toHash}, Status: ${verification.status}`);
     
     return {
       success: true,
@@ -429,8 +443,10 @@ export async function createTelehealthSession(
       };
       
       mockTelehealthSessions.push(mockSession);
-      
-      console.log(`[MOCK TELEHEALTH] Created session ${sessionId} in room ${roomName}`);
+
+      const patientHash = hashSensitiveData(patientId);
+      const providerHash = hashSensitiveData(providerId);
+      console.log(`[MOCK TELEHEALTH] Created session ${sessionId} for patient hash ${patientHash} and provider hash ${providerHash}`);
       
       return {
         success: true,
@@ -449,8 +465,10 @@ export async function createTelehealthSession(
       type: 'group',
       recordParticipantsOnConnect: enableRecording
     });
-    
-    console.log(`[TELEHEALTH] Created room SID: ${room.sid}, Name: ${roomName}`);
+
+    const patientHash = hashSensitiveData(patientId);
+    const providerHash = hashSensitiveData(providerId);
+    console.log(`[TELEHEALTH] Created room SID: ${room.sid} for patient hash ${patientHash} and provider hash ${providerHash}`);
     
     // Here we would store the session details in our database
     
@@ -510,8 +528,9 @@ export async function generateTelehealthToken(
         session.status = 'in-progress';
         session.actualStartTime = new Date();
       }
-      
-      console.log(`[MOCK TELEHEALTH] Generated token for ${userType} ${userName} (${userId}) for session ${sessionId}`);
+
+      const userHash = hashSensitiveData(userId);
+      console.log(`[MOCK TELEHEALTH] Generated token for ${userType} user hash ${userHash} for session ${sessionId}`);
       
       return {
         success: true,
@@ -575,7 +594,7 @@ export async function endTelehealthSession(
         recordingUrl = `https://example.com/recordings/${sessionId}`;
         session.recordingUrl = recordingUrl;
       }
-      
+
       console.log(`[MOCK TELEHEALTH] Ended session ${sessionId}, ended by ${endedBy}`);
       
       return {
@@ -618,7 +637,8 @@ export async function processMedicationAdherenceResponse(
   try {
     // Check if the message confirms medication was taken
     if (messageBody.toUpperCase().includes(`TAKEN-${trackingId}`)) {
-      console.log(`[ADHERENCE] User ${userId} confirmed medication with tracking ID ${trackingId}`);
+      const userHash = hashSensitiveData(userId);
+      console.log(`[ADHERENCE] User hash ${userHash} confirmed medication with tracking ID ${trackingId}`);
       
       // Award points in the gamification system by recording a medication activity
       // Find the medication adherence activity ID (assuming ID 1 for medication adherence)
@@ -682,10 +702,12 @@ export async function processAppointmentResponse(
 }> {
   try {
     const messageUpper = messageBody.toUpperCase();
-    
+
+
     // Handle confirmation
     if (messageUpper.includes(`CONFIRM-${trackingId}`)) {
-      console.log(`[APPOINTMENT] User ${userId} confirmed appointment ${appointmentId}`);
+      const userHash = hashSensitiveData(userId);
+      console.log(`[APPOINTMENT] User hash ${userHash} confirmed appointment ${appointmentId}`);
       
       // Connect to gamification system to award points
       // Assuming ID 2 for appointment confirmation activity
@@ -718,10 +740,12 @@ export async function processAppointmentResponse(
         };
       }
     }
-    
+
+
     // Handle reschedule request
     if (messageUpper.includes(`RESCHEDULE-${trackingId}`)) {
-      console.log(`[APPOINTMENT] User ${userId} requested to reschedule appointment ${appointmentId}`);
+      const userHash = hashSensitiveData(userId);
+      console.log(`[APPOINTMENT] User hash ${userHash} requested to reschedule appointment ${appointmentId}`);
       
       // This would trigger our rescheduling workflow
       // TODO: Implement appointment rescheduling logic
@@ -732,10 +756,12 @@ export async function processAppointmentResponse(
         message: 'Reschedule request received. A staff member will contact you to arrange a new time.'
       };
     }
-    
+
+
     // Handle cancellation
     if (messageUpper.includes(`CANCEL-${trackingId}`)) {
-      console.log(`[APPOINTMENT] User ${userId} cancelled appointment ${appointmentId}`);
+      const userHash = hashSensitiveData(userId);
+      console.log(`[APPOINTMENT] User hash ${userHash} cancelled appointment ${appointmentId}`);
       
       // This would trigger our cancellation workflow
       // TODO: Implement appointment cancellation logic

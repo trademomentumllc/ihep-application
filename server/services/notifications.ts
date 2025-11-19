@@ -3,6 +3,12 @@ import { sendAppointmentReminder as sendAppointmentReminderSMS } from './sms';
 import { db } from '../db';
 import { users, appointments } from '@shared/schema';
 import { eq, and, gte, lte, or, sql } from 'drizzle-orm';
+import { createHash } from 'crypto';
+
+// Utility function to hash sensitive data for logging
+function hashSensitiveData(data: string | number): string {
+  return createHash('sha256').update(String(data)).digest('hex').substring(0, 8);
+}
 
 /**
  * Send appointment reminders for appointments within the specified time frame
@@ -105,7 +111,8 @@ export async function sendAppointmentReminders(hoursInAdvance = 24): Promise<voi
             startTime,
             providerName
           );
-          console.log(`✓ Email reminder sent to ${patientEmail} for appointment #${appointmentId}`);
+          const emailHash = hashSensitiveData(patientEmail);
+          console.log(`✓ Email reminder sent to hash ${emailHash} for appointment #${appointmentId}`);
         }
         
         // Send SMS reminder if patient has a phone number
@@ -116,7 +123,8 @@ export async function sendAppointmentReminders(hoursInAdvance = 24): Promise<voi
             startTime,
             providerName
           );
-          console.log(`✓ SMS reminder sent to ${patientPhone} for appointment #${appointmentId}`);
+          const phoneHash = hashSensitiveData(patientPhone);
+          console.log(`✓ SMS reminder sent to hash ${phoneHash} for appointment #${appointmentId}`);
         }
         
         // Mark appointment as having reminders sent
@@ -224,7 +232,8 @@ export async function scheduleAppointmentReminder(appointmentId: number, minutes
           appointmentTime,
           providerName
         );
-        console.log(`✓ Immediate email reminder sent to ${patientEmail} for appointment #${appointmentId}`);
+        const emailHash = hashSensitiveData(patientEmail);
+        console.log(`✓ Immediate email reminder sent to hash ${emailHash} for appointment #${appointmentId}`);
       }
       
       // Send SMS reminder if patient has a phone number
@@ -235,7 +244,8 @@ export async function scheduleAppointmentReminder(appointmentId: number, minutes
           appointmentTime,
           providerName
         );
-        console.log(`✓ Immediate SMS reminder sent to ${patientPhone} for appointment #${appointmentId}`);
+        const phoneHash = hashSensitiveData(patientPhone);
+        console.log(`✓ Immediate SMS reminder sent to hash ${phoneHash} for appointment #${appointmentId}`);
       }
     } else {
       console.log(`Scheduling reminder for appointment #${appointmentId} in ${Math.round(delay / 60000)} minutes`);
@@ -250,7 +260,8 @@ export async function scheduleAppointmentReminder(appointmentId: number, minutes
             appointmentTime,
             providerName
           );
-          console.log(`✓ Scheduled email reminder sent to ${patientEmail} for appointment #${appointmentId}`);
+          const emailHash = hashSensitiveData(patientEmail);
+          console.log(`✓ Scheduled email reminder sent to hash ${emailHash} for appointment #${appointmentId}`);
         }
         
         // Send SMS reminder if patient has a phone number
@@ -261,7 +272,8 @@ export async function scheduleAppointmentReminder(appointmentId: number, minutes
             appointmentTime,
             providerName
           );
-          console.log(`✓ Scheduled SMS reminder sent to ${patientPhone} for appointment #${appointmentId}`);
+          const phoneHash = hashSensitiveData(patientPhone);
+          console.log(`✓ Scheduled SMS reminder sent to hash ${phoneHash} for appointment #${appointmentId}`);
         }
       }, delay);
     }
