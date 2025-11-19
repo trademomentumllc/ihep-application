@@ -9572,9 +9572,16 @@ var limiter = RateLimit({
 app.use(limiter);
 
 app.get('/:path', function(req, res) {
-  let path = req.params.path;
-  if (isValidPath(path))
-    res.sendFile(path);
+  const userPath = req.params.path;
+  const publicRoot = path4.resolve(import.meta.dirname, "public");
+  // Safe resolution: join with public root and check containment
+  const resolvedPath = fs3.realpathSync(path4.resolve(publicRoot, userPath));
+  if (!resolvedPath.startsWith(publicRoot)) {
+    // Attempted path traversal or access outside public dir
+    res.status(403).send('Forbidden');
+    return;
+  }
+  res.sendFile(resolvedPath);
 });
 }
 
