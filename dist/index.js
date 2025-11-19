@@ -9576,7 +9576,6 @@ app.get('/:path', function(req, res) {
   if (isValidPath(path))
     res.sendFile(path);
 });
-  });
 }
 
 // server/services/email.ts
