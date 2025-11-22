@@ -67,6 +67,32 @@ const ChartContainer = React.forwardRef<
 })
 ChartContainer.displayName = "Chart"
 
+/**
+ * Sanitize color values to prevent XSS attacks
+ * Only allows valid CSS color formats
+ */
+const sanitizeColor = (color: string | undefined): string | null => {
+  if (!color) return null
+
+  // Allow hex colors (#rgb, #rrggbb, #rrggbbaa)
+  if (/^#[0-9A-Fa-f]{3,8}$/.test(color)) return color
+
+  // Allow rgb/rgba
+  if (/^rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*(,\s*[\d.]+\s*)?\)$/.test(color)) return color
+
+  // Allow hsl/hsla
+  if (/^hsla?\(\s*\d+\s*,\s*\d+%\s*,\s*\d+%\s*(,\s*[\d.]+\s*)?\)$/.test(color)) return color
+
+  // Allow CSS color keywords (lowercase only)
+  if (/^[a-z]+$/.test(color)) return color
+
+  // Allow CSS variables
+  if (/^var\(--[a-zA-Z0-9-]+\)$/.test(color)) return color
+
+  // Reject anything else (potential XSS)
+  return null
+}
+
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
     ([, config]) => config.theme || config.color
@@ -88,7 +114,9 @@ ${colorConfig
     const color =
       itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
       itemConfig.color
-    return color ? `  --color-${key}: ${color};` : null
+    // Sanitize color to prevent XSS
+    const sanitizedColor = sanitizeColor(color)
+    return sanitizedColor ? `  --color-${key}: ${sanitizedColor};` : null
   })
   .join("\n")}
 }

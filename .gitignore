@@ -8,6 +8,18 @@ terraform.tfstate.backup
 # Dependencies
 /node_modules/
 
+# Build artifacts
+/dist/
+/.next/
+/out/
+/build/
+*.tsbuildinfo
+.cache/
+
+# Testing
+/coverage/
+/.nyc_output/
+
 # Logs
 /logs/
 *.log

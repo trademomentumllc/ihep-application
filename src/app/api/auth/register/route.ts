@@ -5,7 +5,12 @@ import { mockStore } from '@/lib/mockStore'
 
 const insertUserSchema = z.object({
   username: z.string().min(3),
-  password: z.string().min(6),
+  password: z.string()
+    .min(12, 'Password must be at least 12 characters')
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+      'Password must contain uppercase, lowercase, number, and special character (@$!%*?&)'
+    ),
   email: z.string().email(),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
@@ -39,7 +44,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Hash the password before storing it
-    const saltRounds = 10
+    // Use 12 rounds for stronger protection (OWASP 2024 recommendation)
+    const saltRounds = 12
     const hashedPassword = await bcrypt.hash(validatedData.password, saltRounds)
 
     // Replace plain password with hashed password
@@ -63,7 +69,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.error('Registration error:', error)
+    // Log error without exposing sensitive user data
+    console.error('Registration failed', {
+      errorType: error instanceof Error ? error.name : 'Unknown',
+      // Do not log user input data (email, username, etc.)
+    })
     return NextResponse.json(
       { message: "Registration failed" },
       { status: 500 }
