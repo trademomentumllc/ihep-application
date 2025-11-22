@@ -20,7 +20,8 @@ class InMemoryUserStore {
 
   constructor() {
     // Seed a demo user for local logins
-    const seedPassword = bcrypt.hashSync('password123', 10)
+    // Use 12 rounds for stronger protection (OWASP 2024 recommendation)
+    const seedPassword = bcrypt.hashSync('password123', 12)
     this.users.push({
       id: this.nextId++,
       username: 'demo',
