@@ -8,13 +8,18 @@ import Link from 'next/link'
 
 export default function DashboardPage() {
   const { data: session } = useSession()
+  const displayName = (() => {
+    const user: any = session?.user
+    const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(' ').trim()
+    return fullName || user?.username || user?.email || 'User'
+  })()
 
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
       <div>
         <h1 className="text-3xl font-bold gradient-text">
-          Welcome back, {session?.user?.name || 'User'}
+          Welcome back, {displayName}
         </h1>
         <p className="text-gray-600 mt-2">
           Here's an overview of your health and wellness

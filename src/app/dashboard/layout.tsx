@@ -70,7 +70,11 @@ export default function DashboardLayout({
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-600">
-                {session.user?.name || session.user?.email}
+                {(() => {
+                  const user: any = session.user
+                  const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(' ').trim()
+                  return fullName || user?.username || user?.email
+                })()}
               </span>
               <Button variant="ghost" size="icon">
                 <User className="h-5 w-5" />
