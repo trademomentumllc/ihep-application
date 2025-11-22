@@ -898,7 +898,7 @@ class DigitalTwinSynthesisService:
         )
         
         await self.update_queue.put((priority, request))
-        logger.debug(f"Queued update request for patient {patient_id}")
+        logger.debug(f"Queued update request for patient hash {hash_patient_id(patient_id)}")
     
     async def _update_processing_loop(self):
         """
@@ -1230,7 +1230,7 @@ async def demo_synthesis_service():
     
     for patient_id in patient_ids:
         await service.request_patient_update(patient_id, priority=1)
-        print(f"✓ Requested update for {patient_id}")
+        print(f"✓ Requested update for patient hash {hash_patient_id(patient_id)}")
     
     # Let service process updates
     print("\n[Processing] Allowing service to process updates...")
