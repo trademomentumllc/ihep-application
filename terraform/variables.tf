@@ -16,6 +16,12 @@ variable "billing_project" {
   default     = "cs-host-953dd88e729f4fd0a661ae"
 }
 
+variable "enable_network" {
+  description = "Gate resources that depend on shared VPC networking"
+  type        = bool
+  default     = false
+}
+
 variable "folders" {
   description = "Folder structure as a map"
   type        = map
