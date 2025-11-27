@@ -5,12 +5,14 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Home, Activity, Calendar, BookOpen, Users, Bot, User } from 'lucide-react'
+import { Home, Activity, Calendar, BookOpen, Users, Bot, User, Target, TrendingUp } from 'lucide-react'
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: Home },
   { href: '/dashboard/wellness', label: 'Wellness', icon: Activity },
   { href: '/dashboard/calendar', label: 'Calendar', icon: Calendar },
+  { href: '/opportunities', label: 'Opportunities', icon: Target },
+  { href: '/financials', label: 'Financials', icon: TrendingUp },
   { href: '/dashboard/resources', label: 'Resources', icon: BookOpen },
   { href: '/dashboard/providers', label: 'Providers', icon: Users },
   { href: '/dashboard/digital-twin', label: 'Digital Twin', icon: Bot },

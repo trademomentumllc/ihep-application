@@ -6,16 +6,22 @@
 # This workflow integrates a collection of open source static analysis tools
 # with GitHub code scanning. For documentation, or to provide feedback, visit
 # https://github.com/github/ossar-action
+
+# NOTE: OSSAR is deprecated and primarily for .NET/C# projects.
+# This project uses CodeQL for JavaScript/TypeScript and Python analysis.
+# Workflow disabled to prevent failures.
+
 name: OSSAR
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ "main" ]
-  schedule:
-    - cron: '36 1 * * 5'
+  workflow_dispatch:  # Manual trigger only
+  # Disabled automatic triggers:
+  # push:
+  #   branches: [ "main" ]
+  # pull_request:
+  #   branches: [ "main" ]
+  # schedule:
+  #   - cron: '36 1 * * 5'
 
 permissions:
   contents: read
