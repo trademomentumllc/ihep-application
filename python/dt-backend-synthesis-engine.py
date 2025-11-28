@@ -1207,7 +1207,9 @@ async def demo_synthesis_service():
     
     for patient_id in patient_ids:
         await service.request_patient_update(patient_id, priority=1)
-        print(f"✓ Requested update for {patient_id}")
+        # Log only a hashed version of patient_id for privacy
+        hashed_pid = hashlib.sha256(patient_id.encode()).hexdigest()[:8]
+        print(f"✓ Requested update for patient id [hash: {hashed_pid}]")
     
     # Let service process updates
     print("\n[Processing] Allowing service to process updates...")
