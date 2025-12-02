@@ -1,5 +1,5 @@
-flask==3.0.0
-gunicorn==22.0.1
+flask==3.0.3
+gunicorn==23.0.0
 google-cloud-healthcare
 google-cloud-storage
 google-cloud-aiplatform

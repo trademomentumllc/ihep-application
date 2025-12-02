@@ -903,7 +903,10 @@ class DigitalTwinSynthesisService:
         )
         
         await self.update_queue.put((priority, request))
-        logger.debug(f"Queued update request for patient {patient_id}")
+        logger.debug(
+            "Queued update request for patient hash %s",
+            hash_patient_id(patient_id),
+        )
     
     async def _update_processing_loop(self):
         """
