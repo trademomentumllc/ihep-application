@@ -1,8 +1,8 @@
 # Core Framework
 Flask==3.0.3
-Flask-CORS==4.0.2
+Flask-CORS==4.0.4
 Flask-Limiter==3.12
-gunicorn==23.0.0
+gunicorn==23.1.0
 gevent==25.9.1
 
 # Google Cloud
@@ -23,8 +23,8 @@ numpy==1.26.4
 scipy==1.14.1
 scikit-learn==1.5.2
 pandas==2.2.3
-torch==2.9.1
-transformers==4.47.1
+torch==2.10.0
+transformers==4.49.0
 
 # Database
 SQLAlchemy==2.0.44
@@ -33,10 +33,10 @@ alembic==1.17.2
 redis==5.0.8
 
 # Security
-cryptography==46.0.3
+cryptography==46.0.4
 PyJWT==2.10.1
 argon2-cffi==23.1.0
-python-jose[cryptography]==3.5.0
+python-jose[cryptography]==3.5.1
 bcrypt==4.3.0
 
 # Data Validation
@@ -54,7 +54,7 @@ faker==22.5.0
 hypothesis==6.98.0
 
 # Code Quality
-black==24.1.1
+black==24.8.0
 flake8==7.0.0
 mypy==1.8.0
 pylint==3.0.3
@@ -67,7 +67,7 @@ click==8.1.7
 requests==2.32.5
 httpx==0.28.1
 tenacity==9.1.2
-aiohttp==3.13.2
+aiohttp==3.14.0
 celery==5.6.0
 kombu==5.6.1
 

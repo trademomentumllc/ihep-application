@@ -85,6 +85,40 @@ class Config:
     RATE_LIMIT_WINDOW_SECONDS = 60
 
 
+LOG_HASH_SALT = os.environ.get("FINANCIAL_LOG_HASH_SALT", os.environ.get("AUDIT_LOG_REDACTION_SALT", ""))
+logger = logging.getLogger("ihep.financial")
+
+
+def hash_identifier(value: Optional[str]) -> str:
+    """Create a consistent salted hash for identifiers in logs."""
+    normalized = value or ""
+    if LOG_HASH_SALT:
+        normalized = f"{LOG_HASH_SALT}:{normalized}"
+    return hashlib.sha256(normalized.encode()).hexdigest()[:12]
+
+
+def generate_error_reference() -> str:
+    """Generate opaque reference tokens for client error correlation."""
+    return secrets.token_urlsafe(8)
+
+
+def log_internal_error(action: str, exc: Exception, **context: Optional[str]) -> str:
+    """Log sanitized error details and return a reference token."""
+    reference = generate_error_reference()
+    hashed_context = {
+        key: hash_identifier(str(value) if value is not None else None)
+        for key, value in context.items()
+    }
+    logger.error(
+        "%s failed: ref=%s error_type=%s context=%s",
+        action,
+        reference,
+        exc.__class__.__name__,
+        hashed_context,
+    )
+    return reference
+
+
 # Enums
 class IncomeSourceType(Enum):
     """Types of income sources tracked by the financial twin."""
@@ -957,7 +991,8 @@ def create_app() -> Flask:
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     )
-    logger = logging.getLogger(__name__)
+    global logger
+    logger = logging.getLogger("ihep.financial")
     
     # Initialize services
     redis_client = redis.Redis(
@@ -1027,11 +1062,14 @@ def create_app() -> Flask:
                 "state": {...}
             }
         """
+        data = request.get_json(silent=True) or {}
+        participant_id_raw = data.get("participant_id")
+
         try:
-            data = request.get_json()
-            
-            # Parse input data
-            participant_id = UUID(data["participant_id"])
+            if not participant_id_raw:
+                raise ValueError("participant_id is required")
+
+            participant_id = UUID(participant_id_raw)
             
             income_streams = [
                 IncomeStream(
@@ -1137,9 +1175,20 @@ def create_app() -> Flask:
             
             return jsonify(response), 200
             
-        except Exception as e:
-            logger.error(f"Error calculating financial score: {e}")
-            return jsonify({"error": str(e)}), 400
+        except (ValueError, KeyError, TypeError) as exc:
+            reference = log_internal_error(
+                "financial_score_invalid_payload",
+                exc,
+                participant_id=participant_id_raw,
+            )
+            return jsonify({"error": "Invalid request payload", "reference": reference}), 400
+        except Exception as exc:
+            reference = log_internal_error(
+                "financial_score_processing_error",
+                exc,
+                participant_id=participant_id_raw,
+            )
+            return jsonify({"error": "Unable to calculate financial score", "reference": reference}), 500
     
     @app.route("/api/v1/opportunities/match", methods=["POST"])
     def match_opportunities():
@@ -1168,8 +1217,10 @@ def create_app() -> Flask:
                 ]
             }
         """
+        data = request.get_json(silent=True) or {}
+        participant_id_raw = data.get("participant_id")
+
         try:
-            data = request.get_json()
             profile = data.get("profile", {})
             
             # In production, opportunities would come from database
@@ -1234,9 +1285,20 @@ def create_app() -> Flask:
             
             return jsonify(response), 200
             
-        except Exception as e:
-            logger.error(f"Error matching opportunities: {e}")
-            return jsonify({"error": str(e)}), 400
+        except (TypeError, ValueError, KeyError) as exc:
+            reference = log_internal_error(
+                "opportunity_match_invalid_payload",
+                exc,
+                participant_id=participant_id_raw,
+            )
+            return jsonify({"error": "Invalid request payload", "reference": reference}), 400
+        except Exception as exc:
+            reference = log_internal_error(
+                "opportunity_match_processing_error",
+                exc,
+                participant_id=participant_id_raw,
+            )
+            return jsonify({"error": "Unable to match opportunities", "reference": reference}), 500
     
     @app.route("/api/v1/morphogenetic/status", methods=["GET"])
     def morphogenetic_status():
