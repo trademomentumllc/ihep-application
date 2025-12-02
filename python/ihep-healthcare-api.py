@@ -198,7 +198,7 @@ def get_patient(patient_id):
         return jsonify(patient_data), 200
         
     except exceptions.NotFound:
-        logger.info(f"Patient {patient_id} not found")
+        logger.info("Patient resource not found")  # Omit patient_id from logs for privacy
         return jsonify({'error': 'Patient not found'}), 404
     except exceptions.GoogleAPIError as e:
         logger.error(f"Error retrieving patient: {str(e)}")
