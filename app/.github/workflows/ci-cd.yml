@@ -7,7 +7,8 @@ on:
     branches: [main, staging]
 
 env:
-  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GCP_PROJECT_ID: gen-lang-client-0928975904
+  NEXT_PUBLIC_API_URL: https://www.ihep.app/api
   GCP_REGION: us-central1
   GAR_LOCATION: us-central1
   REGISTRY: gcr.io
@@ -54,8 +55,8 @@ jobs:
       - name: Build
         run: cd frontend && npm run build
         env:
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-          NEXT_PUBLIC_GCP_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
+          NEXT_PUBLIC_API_URL: https://ihep-platform.org
+          NEXT_PUBLIC_GCP_PROJECT: gen-lang-client-0928975904
   
   # Backend tests
   backend-test:
@@ -69,7 +70,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.13'
           cache: 'pip'
       
       - name: Install dependencies
@@ -123,8 +124,8 @@ jobs:
           if [ "${{ matrix.service }}" = "frontend" ]; then
             cd frontend
             docker build -t ${{ env.REGISTRY }}/${{ env.GCP_PROJECT_ID }}/${{ matrix.service }}:${{ github.sha }} \
-              --build-arg NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }} \
-              --build-arg NEXT_PUBLIC_GCP_PROJECT=${{ secrets.GCP_PROJECT_ID }} \
+              --build-arg NEXT_PUBLIC_API_URL=${{ env.NEXT_PUBLIC_API_URL }} \
+              --build-arg NEXT_PUBLIC_GCP_PROJECT=${{ env.GCP_PROJECT_ID }} \
               .
           else
             cd backend
@@ -148,9 +149,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    environment:
-      name: staging
-      url: https://staging.ihep-platform.org
+    environment: staging
     steps:
       - uses: actions/checkout@v4
       
@@ -186,9 +185,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    environment:
-      name: production
-      url: https://ihep-platform.org
+    environment: production
     steps:
       - uses: actions/checkout@v4
       
