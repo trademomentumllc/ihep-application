@@ -527,9 +527,14 @@ def deidentify_patient_data(patient_id):
             success=True
         )
         
+<<<<<<< HEAD
+        logger.info(f"De-identified data for patient [REDACTED]")
+        
+=======
         patient_hash = hashlib.sha256(str(patient_id).encode()).hexdigest()[:8]
         logger.info(f"De-identified data for patient hash {patient_hash}")
 
+>>>>>>> f8cd5b0 (updated front and backend to include financial generation module)
         return jsonify({
             'message': 'De-identification completed',
             'destination': destination_dataset,
