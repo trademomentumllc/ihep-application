@@ -8,6 +8,16 @@ terraform.tfstate.backup
 # Dependencies
 /node_modules/
 
+# Python virtual environments
+venv/
+.venv/
+**/venv/
+**/.venv/
+.venv-*/
+*.py[cod]
+__pycache__/
+*.so
+
 # Build artifacts
 /dist/
 /.next/

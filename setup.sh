@@ -367,7 +367,7 @@ install_dependencies() {
     source venv/bin/activate
 
     pip install --upgrade pip 2>&1 | tee -a "${LOG_FILE}"
-    pip install -r requirements.txt 2>&1 | tee -a "${LOG_FILE}"
+    pip install -r applications/backend/requirements.txt 2>&1 | tee -a "${LOG_FILE}"
 
     deactivate
     cd "${SCRIPT_DIR}"
