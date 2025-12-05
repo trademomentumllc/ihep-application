@@ -287,6 +287,8 @@ IHEP (Integrated Healthcare Empowerment Platform) is a HIPAA-compliant healthcar
 7. **Caching**: Results cached in Redis (when appropriate)
 8. **Response**: Encrypted response returned to client
 
+```
+
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                      IHEP DATA FLOW & INTERACTION DIAGRAM                    ║
 ║                    Patient Journey Through The System                        ║
@@ -532,6 +534,8 @@ IHEP (Integrated Healthcare Empowerment Platform) is a HIPAA-compliant healthcar
          │ 4. Update Local Models  │
          │            │            │
          └────────────┴────────────┘
+
+```
          
     5. Next Training Round Begins
     
@@ -591,6 +595,8 @@ See [SECURITY_AUDIT_REPORT.md](SECURITY_AUDIT_REPORT.md) for complete security a
 
 **Last Security Review**: December 2, 2025
 **Next Review Date**: March 2, 2026
+
+```
 
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                   IHEP COMPLIANCE & GOVERNANCE FRAMEWORK                     ║
@@ -849,6 +855,8 @@ See [SECURITY_AUDIT_REPORT.md](SECURITY_AUDIT_REPORT.md) for complete security a
 │  └──────────────┘                                                           │
 │                                                                              │
 └──────────────────────────────────────────────────────────────────────────────┘
+
+```
 
 ---
 
