@@ -2,6 +2,7 @@
 import asyncio
 import json
 import logging
+import os
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 import hashlib
@@ -21,6 +22,10 @@ from cryptography.fernet import Fernet
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+def hash_patient_id(patient_id: str) -> str:
+    """Hash patient ID for secure logging (HIPAA compliance)"""
+    return hashlib.sha256(patient_id.encode()).hexdigest()[:16]
 
 app = FastAPI(title="Patient Digital Twin Service")
 
@@ -209,7 +214,7 @@ async def update_twin(
         
         publisher.publish(topic_path, message_data)
         
-        logger.info(f"Twin updated for patient {update_request.patient_id}")
+        logger.info(f"Twin updated for patient {hash_patient_id(update_request.patient_id)}")
         
         return {
             "status": "success",

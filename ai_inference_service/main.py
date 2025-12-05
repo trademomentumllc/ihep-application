@@ -2,6 +2,7 @@
 import os
 import json
 import logging
+import hashlib
 from datetime import datetime
 from typing import Dict, List, Any
 import numpy as np
@@ -16,6 +17,10 @@ from google.cloud.aiplatform import gapic as aip
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+def hash_patient_id(patient_id: str) -> str:
+    """Hash patient ID for secure logging (HIPAA compliance)"""
+    return hashlib.sha256(patient_id.encode()).hexdigest()[:16]
 
 app = FastAPI(title="AI/ML Inference Service")
 
@@ -162,7 +167,7 @@ async def predict_risk(patient_data: PatientData):
             timestamp=datetime.utcnow().isoformat()
         )
         
-        logger.info(f"Risk prediction generated for patient {patient_data.patient_id}: {risk_score:.3f}")
+        logger.info(f"Risk prediction generated for patient {hash_patient_id(patient_data.patient_id)}: {risk_score:.3f}")
         
         return prediction
         
