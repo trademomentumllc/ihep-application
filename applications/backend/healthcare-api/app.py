@@ -7,12 +7,12 @@ Implements k-anonymity de-identification for research data
 import os
 import logging
 from typing import Dict, List, Optional, Any
-from datetime import datetime, timedelta
 from flask import Flask, request, jsonify
-from google.cloud import healthcare_v1
 from google.cloud import kms_v1
 from google.auth import default
+from google.auth.transport.requests import AuthorizedSession
 from google.api_core.exceptions import NotFound
+import requests
 import hashlib
 import uuid
 
@@ -29,14 +29,15 @@ FHIR_STORE = os.getenv('FHIR_STORE')
 KMS_KEY_RING = os.getenv('KMS_KEY_RING')
 KMS_CRYPTO_KEY = os.getenv('KMS_CRYPTO_KEY')
 IDENTIFIER_HASH_SALT = os.getenv('IDENTIFIER_HASH_SALT', '')
+HEALTHCARE_API_BASE = "https://healthcare.googleapis.com/v1"
 
 # Initialize Flask app
 app = Flask(__name__)
 logger = logging.getLogger(__name__)
 
 # Initialize Google Cloud clients
-credentials, project = default()
-healthcare_client = healthcare_v1.HealthcareServiceClient()
+credentials, _ = default(scopes=['https://www.googleapis.com/auth/cloud-platform'])
+healthcare_session = AuthorizedSession(credentials)
 kms_client = kms_v1.KeyManagementServiceClient()
 
 # Initialize utilities
@@ -82,6 +83,28 @@ class HealthcareAPIService:
             f"projects/{GCP_PROJECT}/locations/{GCP_LOCATION}/"
             f"datasets/{HEALTHCARE_DATASET}/fhirStores/{FHIR_STORE}"
         )
+
+    def _healthcare_request(
+        self,
+        method: str,
+        path: str,
+        body: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """Send an authenticated request to the Cloud Healthcare FHIR endpoint."""
+        url = f"{HEALTHCARE_API_BASE}/{path.lstrip('/')}"
+        response = healthcare_session.request(method, url, json=body, timeout=30)
+
+        if response.status_code == 404:
+            raise NotFound(f"Resource not found at {path}")
+
+        try:
+            response.raise_for_status()
+        except requests.HTTPError as exc:
+            raise RuntimeError(
+                f"Healthcare API {method} {path} failed with {response.status_code}"
+            ) from exc
+
+        return response.json()
 
     def _raise_service_error(
         self,
@@ -178,9 +201,10 @@ class HealthcareAPIService:
                 **patient_data
             }
             
-            response = healthcare_client.create_resource(
-                parent=self.fhir_store_path,
-                resource=request_body
+            response = self._healthcare_request(
+                method='POST',
+                path=f"{self.fhir_store_path}/fhir/Patient",
+                body=request_body,
             )
             
             # Audit log
@@ -236,7 +260,10 @@ class HealthcareAPIService:
         try:
             # Fetch from Healthcare API
             resource_path = f"{self.fhir_store_path}/fhir/Patient/{patient_id}"
-            response = healthcare_client.get_resource(name=resource_path)
+            response = self._healthcare_request(
+                method='GET',
+                path=resource_path,
+            )
             
             # Extract wrapped DEK
             wrapped_dek = None
@@ -418,8 +445,10 @@ class HealthcareAPIService:
     def _fetch_for_deidentification(self, patient_id: str) -> Dict[str, Any]:
         """Fetch patient data for de-identification (internal use only)"""
         resource_path = f"{self.fhir_store_path}/fhir/Patient/{patient_id}"
-        response = healthcare_client.get_resource(name=resource_path)
-        return response
+        return self._healthcare_request(
+            method='GET',
+            path=resource_path,
+        )
 
 
 # Initialize service

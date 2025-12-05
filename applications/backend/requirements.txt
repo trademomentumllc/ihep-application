@@ -23,12 +23,11 @@ hiredis==3.0.0  # C-based parser for performance
 psycopg2-binary==2.9.10
 
 # Google Cloud Platform
-google-cloud-healthcare==1.13.0
 google-cloud-aiplatform==1.77.0
-google-cloud-secretmanager==2.22.0
 google-cloud-logging==3.11.3
 google-cloud-storage==2.19.0
-google-cloud-kms==2.25.0
+google-cloud-kms==3.7.0
+google-cloud-secret-manager==2.25.0
 
 # Security & Cryptography
 cryptography==46.0.3
@@ -55,7 +54,7 @@ python-json-logger==3.2.1
 flask-cors==6.0.1
 
 # Health Checks
-py-healthcheck==3.0.3
+py-healthcheck==1.10.1
 
 # Testing (Development)
 pytest==8.3.4

@@ -10,11 +10,11 @@ import psycopg2
 from flask import Flask, jsonify, request, g
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from google.cloud import healthcare_v1
 from google.cloud import aiplatform
 from google.cloud import secretmanager
 from google.cloud import logging as cloud_logging
-from pydantic import BaseModel, ValidationError, Field, validator
+from werkzeug.exceptions import HTTPException
+from pydantic import BaseModel, ValidationError, Field, field_validator
 from functools import wraps
 from typing import Optional
 import hashlib
@@ -65,16 +65,16 @@ class SynergyScoreRequest(BaseModel):
     clinical_adherence: float = Field(..., ge=0, le=100, description="Clinical adherence percentage")
     passive_income_generated: float = Field(..., ge=0, le=100, description="Passive income score")
 
-    @validator('clinical_adherence', 'passive_income_generated')
+    @field_validator('clinical_adherence', 'passive_income_generated', mode='before')
     def validate_score(cls, v):
         if not isinstance(v, (int, float)):
             raise ValueError("Score must be a number")
         return float(v)
 
 class DigitalTwinRequest(BaseModel):
-    user_id: str = Field(..., min_length=1, max_length=100, regex=r'^[a-zA-Z0-9_-]+$')
+    user_id: str = Field(..., min_length=1, max_length=100, pattern=r'^[a-zA-Z0-9_-]+$')
 
-    @validator('user_id')
+    @field_validator('user_id', mode='before')
     def validate_user_id(cls, v):
         # Prevent path traversal and injection
         if '../' in v or '..' in v or '/' in v:
@@ -164,6 +164,12 @@ def handle_error(e):
         "request_id": getattr(g, 'request_id', 'unknown')
     }), 500
 
+@app.errorhandler(HTTPException)
+def handle_http_exception(e):
+    """Return structured responses for HTTP errors like 404 without 500 logging."""
+    logger.warning(f"HTTP error {e.code}: {e.description}")
+    return jsonify({"error": e.name, "message": e.description}), e.code
+
 @app.errorhandler(ValidationError)
 def handle_validation_error(e):
     """Handle Pydantic validation errors"""
@@ -189,6 +195,17 @@ def health_check():
         "status": "healthy",
         "service": "ihep-healthcare-api",
         "timestamp": time.time()
+    }), 200
+
+@app.route('/', methods=['GET'])
+def root():
+    """Default route to avoid 404s on base URL."""
+    return jsonify({
+        "service": "ihep-healthcare-api",
+        "links": {
+            "health": "/health",
+            "ready": "/ready"
+        }
     }), 200
 
 @app.route('/ready', methods=['GET'])

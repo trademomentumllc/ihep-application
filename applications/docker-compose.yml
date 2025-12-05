@@ -37,7 +37,7 @@ services:
       context: ./backend
       dockerfile: healthcare-api/Dockerfile
     ports:
-      - "8080:8080"
+      - "8000:8000"
     environment:
       - GCP_PROJECT=${GCP_PROJECT}
       - GCP_LOCATION=${GCP_LOCATION}
@@ -65,7 +65,7 @@ services:
       context: ./backend
       dockerfile: auth-service/Dockerfile
     ports:
-      - "8081:8081"
+      - "8088:8088"
     environment:
       - GCP_PROJECT=${GCP_PROJECT}
       - JWT_SECRET=${JWT_SECRET}
@@ -87,7 +87,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8080
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
       - NEXT_PUBLIC_GCP_PROJECT=${GCP_PROJECT}
     depends_on:
       - healthcare-api
