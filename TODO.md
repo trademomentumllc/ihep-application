@@ -1,6 +1,6 @@
 # IHEP Project TODO
 
-Last Updated: December 26, 2024 (Session 3)
+Last Updated: December 26, 2024 (Session 4)
 
 ## Completed Tasks
 
@@ -42,8 +42,20 @@ Last Updated: December 26, 2024 (Session 3)
 - [x] Fix CSP blocking inline scripts in development mode
 - [x] Add Contact form section to landing page (replaces footer scroll)
 - [x] Update images.domains to images.remotePatterns (deprecation fix)
+- [x] Fix hydration mismatch error (cleared .next cache)
+- [x] Add AI chat modal to digital twin page (mock responses)
+- [x] Add interactive SVG body visualization placeholder
+- [x] Add body system status cards with popup details
 
 ## High Priority
+
+### Digital Twin 3D Integration (CRITICAL)
+- [ ] Install Three.js dependency (`npm install three @types/three`)
+- [ ] Integrate existing `DigitalTwinViewer` component into digital twin page
+- [ ] Move `components/digital-twin/` to `src/components/digital-twin/` for consistency
+- [ ] Verify USD loader dependencies are installed
+- [ ] Test OrbitControls camera movement
+- [ ] Verify animation system works
 
 ### Pre-Production Content Cleanup
 - [ ] Replace all placeholder/dummy text with real IHEP content
