@@ -1,6 +1,6 @@
 # IHEP Project TODO
 
-Last Updated: December 26, 2024 (Session 4)
+Last Updated: December 26, 2024 (Session 6)
 
 ## Completed Tasks
 
@@ -49,13 +49,20 @@ Last Updated: December 26, 2024 (Session 4)
 
 ## High Priority
 
-### Digital Twin 3D Integration (CRITICAL)
-- [ ] Install Three.js dependency (`npm install three @types/three`)
-- [ ] Integrate existing `DigitalTwinViewer` component into digital twin page
-- [ ] Move `components/digital-twin/` to `src/components/digital-twin/` for consistency
-- [ ] Verify USD loader dependencies are installed
-- [ ] Test OrbitControls camera movement
-- [ ] Verify animation system works
+### Digital Twin 3D Integration (BLOCKED - Session 6)
+- [x] Install Three.js dependency (`npm install three @types/three`)
+- [x] Install three-usdz-loader (with --legacy-peer-deps)
+- [x] Move `components/digital-twin/` to `src/components/digital-twin/`
+- [x] Add type declarations (`src/types/three-addons.d.ts`)
+- [x] Add COOP/COEP headers to next.config.mjs
+- [x] Fixed 2D/3D toggle button (use plain HTML, not shadcn Button)
+- [x] Fixed 2D/3D mode swap (conditions were inverted)
+- [x] Disabled USDZ loader temporarily (causing "invalid zip data" errors)
+- [ ] **BLOCKED: Turbopack + Three.js bundling error** - See SESSION_HANDOFF.md for details
+  - Error: `Module three/build/three.core.js not available`
+  - Next.js 16.1.1 uses Turbopack by default
+  - Turbopack has incompatibility with Three.js module structure
+  - Need to either: disable Turbopack, change Three.js imports, or downgrade Next.js
 
 ### Pre-Production Content Cleanup
 - [ ] Replace all placeholder/dummy text with real IHEP content

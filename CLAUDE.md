@@ -2,6 +2,17 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Project Attribution
+
+**Author:** Jason M Jarmacz | Evolution Strategist | jason@ihep.app
+**Co-Author:** Claude by Anthropic
+
+All commits to this repository should include both contributors in the commit message:
+```
+Authored-By: Jason M Jarmacz <jason@ihep.app>
+Co-Authored-By: Claude by Anthropic <noreply@anthropic.com>
+```
+
 ## Project Overview
 
 This is the redevelopment of IHEP the Integrated Health Empowerment Program, a novel Aftercare Resource Management Application with features, to empower patients, like **4-Twin Digital Twin Ecosystem**, **Financial Empowerment Module** to assist patients achieve financial empowerment, a vast feed of PubSub articles about their condition, **Telehealth** services, external resources guide with programs, groups, meetings, and others all managed in the **Dynamic Calendar** within their account so everything can be consolidated in one place.
@@ -76,40 +87,173 @@ npm install -D @playwright/test  # For E2E tests
 ### Project Structure
 
 ```
-/
-├── src/
-│   app/                   # Next.js App Router
-│   ├── layout.tsx         # Root layout with AuthProvider
-│   ├── page.tsx           # Landing page
-│   ├── auth/              # Login/signup pages
-│   ├── dashboard/         # Protected dashboard routes
-│   │   ├── page.tsx       # Main dashboard
-│   │   ├── digital-twin/  # 3D health visualization
-│   │   ├── wellness/      # Health metrics
-│   │   ├── calendar/      # Appointments
-│   │   ├── providers/     # Provider directory
-│   │   └── resources/     # Educational content
-│   └── api/               # API routes (auth, etc.)
-├── components/
-│   ├── ui/                # Radix UI + shadcn components
-│   ├── auth/              # AuthProvider, ProtectedRoute
-│   ├── dashboard/         # Dashboard-specific components
-│   ├── digital-twin/      # DigitalTwinCanvas (placeholder for Three.js)
-│   └── ai/                # ChatInterface for AI features
-├── lib/
-│   ├── api/               # API client functions (auth, appointments, wellness)
-│   ├── hooks/             # React hooks (useAuth, useHealthData)
-│   ├── auth/              # NextAuth options and providers
-│   ├── constants/         # Conditions, API endpoints
-│   └── utils.ts           # Utility functions
-├── shared/                # Shared schemas (Zod)
-└── hooks/                 # Additional hooks (use-mobile, use-toast)
-├── scripts/
-│   ├── purge-legacy.mjs       # Clean up old Express/Vite files
-│   └── check-architecture.mjs # Validate project structure
-├── terraform/                 # GCP infrastructure (Foundation Blueprint)
-├── gcp/                       # GCP deployment scripts and configs
-└── markdown/                  # Documentation and planning docs
+ihep-platform/
+│
+├── frontend/                          # Next.js 14 React Application
+│   ├── app/
+│   │   ├── (auth)/
+│   │   │   ├── login/
+│   │   │   ├── register/
+│   │   │   └── mfa/
+│   │   ├── (dashboard)/
+│   │   │   ├── overview/
+│   │   │   ├── clinical-twin/
+│   │   │   ├── behavioral-twin/
+│   │   │   ├── social-twin/
+│   │   │   └── financial-twin/          # NEW
+│   │   ├── digital-twin-viewer/         # 3D Visualization
+│   │   ├── opportunities/               # NEW - Income Generation
+│   │   ├── benefits/                    # NEW - Benefits Matching
+│   │   ├── resources/
+│   │   ├── calendar/
+│   │   ├── messages/
+│   │   ├── community/
+│   │   └── research-portal/
+│   ├── components/
+│   │   ├── auth/
+│   │   ├── digital-twin/
+│   │   │   ├── DigitalTwinCanvas.tsx    # Three.js Renderer
+│   │   │   ├── ManifoldProjector.ts     # Dimensionality Reduction
+│   │   │   └── USDZLoader.ts            # OpenUSD Integration
+│   │   ├── financial/                   # NEW
+│   │   │   ├── FinancialHealthScore.tsx
+│   │   │   ├── OpportunityMatcher.tsx
+│   │   │   ├── BenefitsOptimizer.tsx
+│   │   │   └── IncomeStreamManager.tsx
+│   │   ├── charts/
+│   │   └── layout/
+│   ├── lib/
+│   │   ├── api-client.ts
+│   │   ├── auth-provider.tsx
+│   │   └── websocket-client.ts
+│   ├── styles/
+│   │   └── globals.css
+│   └── public/
+│       ├── models/                      # USD scene files
+│       └── assets/
+│
+├── backend/                             # Microservices
+│   ├── api-gateway/                     # Next.js API Routes
+│   │   └── pages/api/
+│   │       ├── auth/
+│   │       ├── twins/
+│   │       │   ├── clinical.ts
+│   │       │   ├── behavioral.ts
+│   │       │   ├── social.ts
+│   │       │   └── financial.ts         # NEW
+│   │       ├── opportunities/           # NEW
+│   │       └── benefits/                # NEW
+│   ├── services/                        # Python Microservices
+│   │   ├── clinical-twin-service/
+│   │   │   ├── app.py
+│   │   │   ├── models.py
+│   │   │   └── requirements.txt
+│   │   ├── behavioral-twin-service/
+│   │   ├── social-twin-service/
+│   │   ├── financial-twin-service/      # NEW
+│   │   │   ├── app.py
+│   │   │   ├── financial_twin.py
+│   │   │   ├── opportunity_matcher.py
+│   │   │   ├── benefits_optimizer.py
+│   │   │   └── health_finance_predictor.py
+│   │   ├── digital-twin-synthesis/
+│   │   │   ├── manifold_projection.py
+│   │   │   ├── usd_generator.py
+│   │   │   └── incremental_updater.py
+│   │   ├── ml-inference/
+│   │   │   ├── adherence_predictor.py
+│   │   │   ├── risk_stratification.py
+│   │   │   └── federated_trainer.py
+│   │   └── morphogenetic-healing/
+│   │       ├── reaction_diffusion.py
+│   │       ├── anomaly_detector.py
+│   │       └── self_healer.py
+│   └── shared/
+│       ├── database/
+│       │   ├── models.py
+│       │   └── migrations/
+│       ├── auth/
+│       └── utils/
+│
+├── infrastructure/                      # Terraform IaC
+│   ├── modules/
+│   │   ├── networking/
+│   │   ├── security/
+│   │   ├── compute/
+│   │   ├── database/
+│   │   ├── healthcare-api/
+│   │   └── monitoring/
+│   ├── environments/
+│   │   ├── dev/
+│   │   ├── staging/
+│   │   └── production/
+│   ├── main.tf
+│   ├── variables.tf
+│   └── terraform.tfvars
+│
+├── ml-models/                           # AI/ML Training
+│   ├── adherence-prediction/
+│   ├── risk-stratification/
+│   ├── opportunity-matching/            # NEW
+│   ├── health-finance-correlation/      # NEW
+│   ├── federated-learning/
+│   └── model-registry/
+│
+├── data/                                # Data Engineering
+│   ├── etl-pipelines/
+│   ├── fhir-transformers/
+│   ├── data-quality/
+│   └── synthetic-data-generation/
+│
+├── docs/                                # Comprehensive Documentation
+│   ├── architecture/
+│   │   ├── IHEP_Complete_Architecture_v2.docx
+│   │   ├── IHEP_Phase_III_Security_Architecture.md
+│   │   ├── IHEP_Phase_IV_Digital_Twin_Testing.md
+│   │   └── Phase_4_Deployment_Architecture.docx
+│   ├── financial/
+│   │   ├── ihep-financial-health-twins.docx
+│   │   ├── IHEP_30Year_Financial_Projections.md
+│   │   └── ihep-financial-models.docx
+│   ├── implementation/
+│   │   ├── IHEP_PRODUCTION_VALIDATION_ROADMAP.docx
+│   │   ├── IHEP_Phase_III_Implementation_Plan.md
+│   │   └── morphogenetic-implementation.md
+│   ├── business/
+│   │   ├── IHEP_PROJECT_CHARTER.docx
+│   │   ├── IHEP_Investor_Pitch_Deck.pdf
+│   │   └── ihep-grant-applications.docx
+│   ├── api/
+│   │   └── api-reference.md
+│   └── user-guides/
+│
+├── tests/                               # Comprehensive Testing
+│   ├── unit/
+│   ├── integration/
+│   ├── e2e/
+│   ├── security/
+│   └── performance/
+│
+├── scripts/                             # Automation
+│   ├── deployment/
+│   ├── database/
+│   └── monitoring/
+│
+├── .github/
+│   └── workflows/                       # CI/CD Pipelines
+│       ├── test.yml
+│       ├── security-scan.yml
+│       ├── deploy-dev.yml
+│       ├── deploy-staging.yml
+│       └── deploy-production.yml
+│
+├── docker-compose.yml                   # Local Development
+├── Dockerfile
+├── .env.example
+├── .gitignore
+├── README.md
+├── PROJECT_SUMMARY.md                   # This Document
+└── LICENSE
 ```
 
 ### Key Architectural Patterns

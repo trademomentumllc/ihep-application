@@ -11,7 +11,7 @@
 
 ### Primary Strategic Asset: **IHEP (Integrated Health Empowerment Platform)**
 
-**Core Mission**: Digital health platform addressing HIV/AIDS care coordination and cure acceleration through morphogenetic AI systems and patient digital twins.
+**Core Mission**: Digital health platform addressing Healthcare Aftercare coordination and cure acceleration, for life altering conditions, through morphogenetic AI systems and patient digital twins.
 
 **Current Stage**: Pre-Series A funding round ($3.5M convertible note offering)
 **Market Opportunity**: $2.8B serviceable obtainable market (U.S. HIV digital health)

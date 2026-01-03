@@ -1,13 +1,31 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Progress } from '@/components/ui/progress'
-import { Bot, Activity, Brain, Heart, TrendingUp, Zap, Eye, X, Send, User, Maximize2, RotateCcw } from 'lucide-react'
+import { Bot, Activity, Brain, Heart, TrendingUp, Zap, Eye, X, Send, User, Maximize2, RotateCcw, Loader2 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
+
+// Dynamic import for Three.js + OpenUSD viewer (no SSR - requires WebGL)
+const DigitalTwinViewer = dynamic(
+  () => import('@/components/digital-twin/DigitalTwinViewer'),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-[600px] bg-gradient-to-br from-slate-900 to-blue-900 rounded-lg flex items-center justify-center">
+        <div className="text-center text-white">
+          <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4" />
+          <p className="text-lg">Loading 3D Digital Twin...</p>
+          <p className="text-sm text-gray-400 mt-2">Initializing Three.js + OpenUSD renderer</p>
+        </div>
+      </div>
+    ),
+  }
+)
 
 interface ChatMessage {
   id: string
@@ -20,6 +38,7 @@ export default function DigitalTwinPage() {
   const [selectedSystem, setSelectedSystem] = useState<string | null>(null)
   const [showChat, setShowChat] = useState(false)
   const [showFullModel, setShowFullModel] = useState(false)
+  const [use3DViewer, setUse3DViewer] = useState(true)
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       id: '1',
@@ -147,115 +166,148 @@ export default function DigitalTwinPage() {
               Interactive Health Model
             </span>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={rotateModel}>
-                <RotateCcw className="h-4 w-4 mr-1" />
-                Rotate
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => setShowFullModel(!showFullModel)}>
-                <Maximize2 className="h-4 w-4 mr-1" />
-                {showFullModel ? 'Collapse' : 'Expand'}
-              </Button>
+              <button
+                onClick={() => {
+                  setUse3DViewer(!use3DViewer)
+                  setSelectedSystem(null)
+                }}
+                className={`px-4 py-2 rounded-md text-sm font-medium ${
+                  use3DViewer
+                    ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white'
+                    : 'border border-gray-300 bg-white hover:bg-gray-50'
+                }`}
+              >
+                {use3DViewer ? '3D Mode' : '2D Mode'}
+              </button>
+              {!use3DViewer && (
+                <>
+                  <button
+                    onClick={rotateModel}
+                    className="px-4 py-2 rounded-md text-sm font-medium border border-gray-300 bg-white hover:bg-gray-50 flex items-center"
+                  >
+                    <RotateCcw className="h-4 w-4 mr-1" />
+                    Rotate
+                  </button>
+                  <button
+                    onClick={() => setShowFullModel(!showFullModel)}
+                    className="px-4 py-2 rounded-md text-sm font-medium border border-gray-300 bg-white hover:bg-gray-50 flex items-center"
+                  >
+                    <Maximize2 className="h-4 w-4 mr-1" />
+                    {showFullModel ? 'Collapse' : 'Expand'}
+                  </button>
+                </>
+              )}
             </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div
-            className={`bg-gradient-to-br from-slate-900 to-blue-900 rounded-lg relative overflow-hidden transition-all duration-500 ${showFullModel ? 'aspect-square' : 'aspect-video'}`}
-            onClick={() => setSelectedSystem(null)}
-          >
-            {/* Interactive body visualization */}
+          {use3DViewer ? (
+            /* Three.js + OpenUSD Digital Twin Viewer */
+            <DigitalTwinViewer
+              onPatientSelect={(patientData) => {
+                console.log('Patient data:', patientData)
+              }}
+            ></DigitalTwinViewer>
+          ) : (
+            /* SVG 2D Visualization */
             <div
-              className="absolute inset-0 flex items-center justify-center transition-transform duration-700"
-              style={{ transform: `rotateY(${modelRotation}deg)` }}
+              className={`bg-gradient-to-br from-slate-900 to-blue-900 rounded-lg relative overflow-hidden transition-all duration-500 ${showFullModel ? 'aspect-square' : 'aspect-video'}`}
               onClick={() => setSelectedSystem(null)}
             >
-              <div className="relative">
-                {/* Stylized human body outline */}
-                <svg viewBox="0 0 200 400" className="w-32 h-64 md:w-48 md:h-96">
-                  {/* Body outline */}
-                  <ellipse cx="100" cy="40" rx="30" ry="35" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" />
-                  <path d="M70 75 L60 180 L80 180 L85 140 L100 145 L115 140 L120 180 L140 180 L130 75" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" />
-                  <path d="M60 180 L55 300 L75 300 L85 200" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" />
-                  <path d="M140 180 L145 300 L125 300 L115 200" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" />
-                  <path d="M55 300 L50 380 L70 380 L75 300" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" />
-                  <path d="M145 300 L150 380 L130 380 L125 300" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" />
-                  {/* Arms */}
-                  <path d="M70 85 L30 160 L35 165 L75 95" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" />
-                  <path d="M130 85 L170 160 L165 165 L125 95" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" />
+              {/* Interactive body visualization */}
+              <div
+                className="absolute inset-0 flex items-center justify-center transition-transform duration-700"
+                style={{ transform: `rotateY(${modelRotation}deg)` }}
+                onClick={() => setSelectedSystem(null)}
+              >
+                <div className="relative">
+                  {/* Stylized human body outline */}
+                  <svg viewBox="0 0 200 400" className="w-32 h-64 md:w-48 md:h-96">
+                    {/* Body outline */}
+                    <ellipse cx="100" cy="40" rx="30" ry="35" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" />
+                    <path d="M70 75 L60 180 L80 180 L85 140 L100 145 L115 140 L120 180 L140 180 L130 75" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" />
+                    <path d="M60 180 L55 300 L75 300 L85 200" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" />
+                    <path d="M140 180 L145 300 L125 300 L115 200" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" />
+                    <path d="M55 300 L50 380 L70 380 L75 300" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" />
+                    <path d="M145 300 L150 380 L130 380 L125 300" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" />
+                    {/* Arms */}
+                    <path d="M70 85 L30 160 L35 165 L75 95" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" />
+                    <path d="M130 85 L170 160 L165 165 L125 95" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" />
 
-                  {/* Interactive system indicators */}
-                  {/* Brain - Nervous System */}
-                  <circle
-                    cx="100" cy="35" r="15"
-                    fill={selectedSystem === 'nervous' ? 'rgba(168, 85, 247, 0.8)' : 'rgba(168, 85, 247, 0.3)'}
-                    className="cursor-pointer transition-all hover:fill-purple-400"
-                    onClick={(e) => { e.stopPropagation(); setSelectedSystem(selectedSystem === 'nervous' ? null : 'nervous'); }}
-                  />
-                  {/* Heart - Cardiovascular */}
-                  <circle
-                    cx="95" cy="100" r="12"
-                    fill={selectedSystem === 'cardiovascular' ? 'rgba(239, 68, 68, 0.8)' : 'rgba(239, 68, 68, 0.3)'}
-                    className="cursor-pointer transition-all hover:fill-red-400 animate-pulse"
-                    onClick={(e) => { e.stopPropagation(); setSelectedSystem(selectedSystem === 'cardiovascular' ? null : 'cardiovascular'); }}
-                  />
-                  {/* Immune System - Thymus area */}
-                  <circle
-                    cx="100" cy="120" r="10"
-                    fill={selectedSystem === 'immune' ? 'rgba(59, 130, 246, 0.8)' : 'rgba(59, 130, 246, 0.3)'}
-                    className="cursor-pointer transition-all hover:fill-blue-400"
-                    onClick={(e) => { e.stopPropagation(); setSelectedSystem(selectedSystem === 'immune' ? null : 'immune'); }}
-                  />
-                  {/* Metabolic - Stomach area */}
-                  <circle
-                    cx="100" cy="155" r="14"
-                    fill={selectedSystem === 'metabolic' ? 'rgba(34, 197, 94, 0.8)' : 'rgba(34, 197, 94, 0.3)'}
-                    className="cursor-pointer transition-all hover:fill-green-400"
-                    onClick={(e) => { e.stopPropagation(); setSelectedSystem(selectedSystem === 'metabolic' ? null : 'metabolic'); }}
-                  />
-                </svg>
+                    {/* Interactive system indicators */}
+                    {/* Brain - Nervous System */}
+                    <circle
+                      cx="100" cy="35" r="15"
+                      fill={selectedSystem === 'nervous' ? 'rgba(168, 85, 247, 0.8)' : 'rgba(168, 85, 247, 0.3)'}
+                      className="cursor-pointer transition-all hover:fill-purple-400"
+                      onClick={(e) => { e.stopPropagation(); setSelectedSystem(selectedSystem === 'nervous' ? null : 'nervous'); }}
+                    />
+                    {/* Heart - Cardiovascular */}
+                    <circle
+                      cx="95" cy="100" r="12"
+                      fill={selectedSystem === 'cardiovascular' ? 'rgba(239, 68, 68, 0.8)' : 'rgba(239, 68, 68, 0.3)'}
+                      className="cursor-pointer transition-all hover:fill-red-400 animate-pulse"
+                      onClick={(e) => { e.stopPropagation(); setSelectedSystem(selectedSystem === 'cardiovascular' ? null : 'cardiovascular'); }}
+                    />
+                    {/* Immune System - Thymus area */}
+                    <circle
+                      cx="100" cy="120" r="10"
+                      fill={selectedSystem === 'immune' ? 'rgba(59, 130, 246, 0.8)' : 'rgba(59, 130, 246, 0.3)'}
+                      className="cursor-pointer transition-all hover:fill-blue-400"
+                      onClick={(e) => { e.stopPropagation(); setSelectedSystem(selectedSystem === 'immune' ? null : 'immune'); }}
+                    />
+                    {/* Metabolic - Stomach area */}
+                    <circle
+                      cx="100" cy="155" r="14"
+                      fill={selectedSystem === 'metabolic' ? 'rgba(34, 197, 94, 0.8)' : 'rgba(34, 197, 94, 0.3)'}
+                      className="cursor-pointer transition-all hover:fill-green-400"
+                      onClick={(e) => { e.stopPropagation(); setSelectedSystem(selectedSystem === 'metabolic' ? null : 'metabolic'); }}
+                    />
+                  </svg>
 
-                {/* System label */}
-                {selectedSystem && (
-                  <div
-                    className="absolute -right-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-md rounded-lg p-3 pr-8 text-white text-sm max-w-52 shadow-lg cursor-pointer hover:bg-white/30 transition-colors"
-                    onClick={() => setSelectedSystem(null)}
-                    title="Click to close"
-                  >
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setSelectedSystem(null); }}
-                      className="absolute top-1 right-1 w-6 h-6 bg-white/30 hover:bg-white/50 rounded-full flex items-center justify-center text-white transition-colors"
-                      aria-label="Close"
+                  {/* System label */}
+                  {selectedSystem && (
+                    <div
+                      className="absolute -right-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-md rounded-lg p-3 pr-8 text-white text-sm max-w-52 shadow-lg cursor-pointer hover:bg-white/30 transition-colors"
+                      onClick={() => setSelectedSystem(null)}
+                      title="Click to close"
                     >
-                      <X className="w-4 h-4" />
-                    </button>
-                    <p className="font-semibold">{healthSystems.find(s => s.id === selectedSystem)?.name}</p>
-                    <p className="text-xs mt-1 text-gray-200">{healthSystems.find(s => s.id === selectedSystem)?.description}</p>
-                    <p className="text-xs mt-2 text-gray-300 italic">Click to dismiss</p>
-                  </div>
-                )}
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setSelectedSystem(null); }}
+                        className="absolute top-1 right-1 w-6 h-6 bg-white/30 hover:bg-white/50 rounded-full flex items-center justify-center text-white transition-colors"
+                        aria-label="Close"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                      <p className="font-semibold">{healthSystems.find(s => s.id === selectedSystem)?.name}</p>
+                      <p className="text-xs mt-1 text-gray-200">{healthSystems.find(s => s.id === selectedSystem)?.description}</p>
+                      <p className="text-xs mt-2 text-gray-300 italic">Click to dismiss</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Animated particles effect */}
+              <div className="absolute inset-0 opacity-30 pointer-events-none">
+                {Array.from({ length: 30 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute w-1 h-1 bg-white rounded-full animate-pulse"
+                    style={{
+                      left: `${10 + Math.random() * 80}%`,
+                      top: `${10 + Math.random() * 80}%`,
+                      animationDelay: `${Math.random() * 2}s`,
+                    }}
+                  ></div>
+                ))}
+              </div>
+
+              {/* Instructions overlay */}
+              <div className="absolute bottom-4 left-4 text-white/70 text-xs">
+                Click on body regions to explore systems
               </div>
             </div>
-
-            {/* Animated particles effect */}
-            <div className="absolute inset-0 opacity-30 pointer-events-none">
-              {Array.from({ length: 30 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="absolute w-1 h-1 bg-white rounded-full animate-pulse"
-                  style={{
-                    left: `${10 + Math.random() * 80}%`,
-                    top: `${10 + Math.random() * 80}%`,
-                    animationDelay: `${Math.random() * 2}s`,
-                  }}
-                ></div>
-              ))}
-            </div>
-
-            {/* Instructions overlay */}
-            <div className="absolute bottom-4 left-4 text-white/70 text-xs">
-              Click on body regions to explore systems
-            </div>
-          </div>
+          )}
         </CardContent>
       </Card>
 

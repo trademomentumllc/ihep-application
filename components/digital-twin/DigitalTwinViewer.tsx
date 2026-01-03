@@ -1,25 +1,32 @@
+'use client'
+
 /**
  * React component wrapper for IHEP Digital Twin Renderer
- * 
+ *
  * This integrates the three.js rendering engine into your Next.js application
  * with proper lifecycle management and React hooks.
  */
 
 import { useEffect, useRef, useState } from 'react';
-import IHEPDigitalTwinRenderer from './IHEPDigitalTwinRenderer';
+import IHEPDigitalTwinRenderer, { PatientDataSnapshot } from './IHEPDigitalTwinRenderer';
 
-export default function DigitalTwinViewer({ usdScenePath, onPatientSelect }) {
+interface DigitalTwinViewerProps {
+    usdScenePath?: string;
+    onPatientSelect?: (patientData: PatientDataSnapshot) => void;
+}
+
+export default function DigitalTwinViewer({ usdScenePath, onPatientSelect }: DigitalTwinViewerProps) {
     // Ref to container DOM element
-    const containerRef = useRef(null);
-    
+    const containerRef = useRef<HTMLDivElement>(null);
+
     // Ref to renderer instance
-    const rendererRef = useRef(null);
+    const rendererRef = useRef<IHEPDigitalTwinRenderer | null>(null);
     
     // State for viewer controls
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [animationSpeed, setAnimationSpeed] = useState(1.0);
-    const [selectedPatient, setSelectedPatient] = useState(null);
+    const [selectedPatient, setSelectedPatient] = useState<PatientDataSnapshot | null>(null);
     
     // Initialize renderer on mount
     useEffect(() => {
@@ -72,23 +79,23 @@ export default function DigitalTwinViewer({ usdScenePath, onPatientSelect }) {
     };
     
     // Handle time scrubbing
-    const handleTimeChange = (newTime) => {
+    const handleTimeChange = (newTime: number) => {
         if (!rendererRef.current) return;
-        
+
         rendererRef.current.setCurrentTime(newTime);
         setCurrentTime(newTime);
     };
-    
+
     // Handle speed change
-    const handleSpeedChange = (newSpeed) => {
+    const handleSpeedChange = (newSpeed: number) => {
         if (!rendererRef.current) return;
-        
+
         rendererRef.current.setAnimationSpeed(newSpeed);
         setAnimationSpeed(newSpeed);
     };
-    
+
     // Handle patient selection
-    const handlePatientClick = (patientId) => {
+    const handlePatientClick = (patientId: string) => {
         if (!rendererRef.current) return;
         
         const patientData = rendererRef.current.getPatientDataAtCurrentTime(patientId);

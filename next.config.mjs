@@ -8,8 +8,50 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   output: 'standalone',
+  // Transpile Three.js and related packages for proper bundling
+  transpilePackages: ['three', 'three-usdz-loader'],
   // Force correct repo root selection to avoid monorepo lockfile confusion
   outputFileTracingRoot: path.join(__dirname),
+
+  // Turbopack configuration (Next.js 16+ default bundler)
+  // Empty config to silence warning when using webpack for specific features
+  turbopack: {},
+
+  // Webpack configuration for Three.js compatibility
+  // Used when --webpack flag is passed or for specific optimizations
+  webpack: (config, { isServer }) => {
+    // Handle Three.js module resolution
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'three': path.resolve(__dirname, 'node_modules/three'),
+    }
+
+    // Ensure proper handling of Three.js examples/addons
+    config.module.rules.push({
+      test: /three\/examples\/jsm/,
+      sideEffects: true,
+    })
+
+    // Handle GLSL shader files
+    config.module.rules.push({
+      test: /\.(glsl|vs|fs|vert|frag)$/,
+      type: 'asset/source',
+    })
+
+    // Handle USDZ/USD file loading
+    config.module.rules.push({
+      test: /\.(usdz|usda|usdc)$/,
+      type: 'asset/resource',
+    })
+
+    // Exclude Three.js from server-side bundling (WebGL not available)
+    if (isServer) {
+      config.externals = config.externals || []
+      config.externals.push('three')
+    }
+
+    return config
+  },
   images: {
     remotePatterns: [
       {
@@ -36,7 +78,10 @@ const nextConfig = {
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'X-Frame-Options', value: 'DENY' },
-          { key: 'Content-Security-Policy', value: cspValue }
+          { key: 'Content-Security-Policy', value: cspValue },
+          // Required for SharedArrayBuffer (USDZ WASM loader)
+          { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+          { key: 'Cross-Origin-Embedder-Policy', value: 'require-corp' }
         ]
       },
       {
