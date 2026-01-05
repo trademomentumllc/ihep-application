@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,90 +15,97 @@ import {
 } from '@/components/ui/select'
 import { Calendar as CalendarIcon, Plus, Clock, MapPin, User, X } from 'lucide-react'
 
+type CalendarEvent = {
+  id: string
+  title: string
+  provider: string
+  specialty: string
+  datetime: string
+  durationMinutes: number
+  location: string
+  type: 'In-Person' | 'Telehealth'
+}
+
 export default function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [showAddModal, setShowAddModal] = useState(false)
+  const [appointments, setAppointments] = useState<CalendarEvent[]>([])
+  const [loading, setLoading] = useState(true)
   const [appointmentData, setAppointmentData] = useState({
     title: '',
     provider: '',
+    specialty: '',
     date: '',
     time: '',
     duration: '30',
-    type: 'in-person',
+    type: 'In-Person' as CalendarEvent['type'],
     location: '',
     notes: ''
   })
 
-  const handleAddAppointment = (e: React.FormEvent) => {
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true)
+      try {
+        const res = await fetch('/api/calendar/events', { cache: 'no-store' })
+        if (!res.ok) throw new Error('Failed to load events')
+        const data = await res.json()
+        setAppointments(data.events)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [])
+
+  const handleAddAppointment = async (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: Save appointment to database
-    console.log('Adding appointment:', appointmentData)
+    const datetime = `${appointmentData.date}T${appointmentData.time || '00:00'}:00`
+    try {
+      const res = await fetch('/api/calendar/events', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: appointmentData.title,
+          provider: appointmentData.provider,
+          specialty: appointmentData.specialty,
+          datetime,
+          durationMinutes: Number(appointmentData.duration),
+          location: appointmentData.location,
+          type: appointmentData.type
+        })
+      })
+      const { event } = await res.json()
+      setAppointments((prev) => [...prev, event])
+    } catch (err) {
+      console.error(err)
+    }
+
     setShowAddModal(false)
     setAppointmentData({
       title: '',
       provider: '',
+      specialty: '',
       date: '',
       time: '',
       duration: '30',
-      type: 'in-person',
+      type: 'In-Person',
       location: '',
       notes: ''
     })
   }
 
-  // Get current month's appointment days
-  const getAppointmentDay = (dayOffset: number) => {
-    const date = new Date()
-    date.setDate(date.getDate() + dayOffset)
-    return date.getDate()
-  }
+  const appointmentDays = appointments.map((apt) => new Date(apt.datetime).getDate())
 
-  const upcomingAppointments = [
-    {
-      id: '1',
-      title: 'Follow-up Consultation',
-      provider: 'Dr. Sarah Johnson',
-      specialty: 'Internal Medicine',
-      date: 'Tomorrow',
-      day: getAppointmentDay(1),
-      time: '2:00 PM',
-      duration: '30 min',
-      location: 'Main Clinic, Room 203',
-      type: 'In-Person',
-    },
-    {
-      id: '2',
-      title: 'Lab Work',
-      provider: 'Dr. Michael Chen',
-      specialty: 'Laboratory',
-      date: 'Next Monday',
-      day: getAppointmentDay(7),
-      time: '10:30 AM',
-      duration: '15 min',
-      location: 'Lab Building, 2nd Floor',
-      type: 'In-Person',
-    },
-    {
-      id: '3',
-      title: 'Therapy Session',
-      provider: 'Lisa Martinez, LCSW',
-      specialty: 'Mental Health',
-      date: 'Next Wednesday',
-      day: getAppointmentDay(9),
-      time: '4:00 PM',
-      duration: '60 min',
-      location: 'Virtual',
-      type: 'Telehealth',
-    },
-  ]
-
-  // Get appointments for a specific day
   const getAppointmentsForDay = (day: number) => {
-    return upcomingAppointments.filter(apt => apt.day === day)
+    return appointments.filter((apt) => new Date(apt.datetime).getDate() === day)
   }
 
-  // Get all days that have appointments
-  const appointmentDays = upcomingAppointments.map(apt => apt.day)
+  const sortedAppointments = [...appointments].sort(
+    (a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime()
+  )
 
   return (
     <div className="space-y-8">
@@ -367,7 +374,9 @@ export default function CalendarPage() {
                     {getAppointmentsForDay(selectedDate.getDate()).map((apt) => (
                       <div key={apt.id} className="bg-blue-50 border border-blue-200 rounded-lg p-2">
                         <p className="font-medium text-sm">{apt.title}</p>
-                        <p className="text-xs text-gray-600">{apt.time} - {apt.provider}</p>
+                        <p className="text-xs text-gray-600">
+                          {new Date(apt.datetime).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })} - {apt.provider}
+                        </p>
                         <p className="text-xs text-gray-500">{apt.location}</p>
                       </div>
                     ))}
@@ -387,7 +396,8 @@ export default function CalendarPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {upcomingAppointments.map((appointment) => (
+              {loading && <p className="text-sm text-gray-500">Loading appointments...</p>}
+              {!loading && sortedAppointments.map((appointment) => (
                 <div
                   key={appointment.id}
                   className="border rounded-lg p-4 hover:shadow-md transition-shadow"
@@ -414,12 +424,12 @@ export default function CalendarPage() {
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center text-gray-600">
                       <CalendarIcon className="h-4 w-4 mr-2" />
-                      <span>{appointment.date}</span>
+                    <span>{new Date(appointment.datetime).toLocaleString()}</span>
                     </div>
                     <div className="flex items-center text-gray-600">
                       <Clock className="h-4 w-4 mr-2" />
                       <span>
-                        {appointment.time} ({appointment.duration})
+                      {appointment.durationMinutes} min
                       </span>
                     </div>
                     <div className="flex items-center text-gray-600">

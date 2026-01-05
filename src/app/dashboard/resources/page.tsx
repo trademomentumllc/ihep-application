@@ -1,14 +1,38 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { BookOpen, Video, FileText, Download, Search, Heart, Brain, Users } from 'lucide-react'
 
+type ResourceResult = {
+  id: string
+  name: string
+  category: string
+  distanceMiles: number
+  address: string
+  rating: number
+}
+
 export default function ResourcesPage() {
   const [searchQuery, setSearchQuery] = useState('')
+  const [resources, setResources] = useState<ResourceResult[]>([])
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/resources/search', { cache: 'no-store' })
+        if (!res.ok) throw new Error('Failed to load resources')
+        const data = await res.json()
+        setResources(data.results)
+      } catch (err) {
+        console.error(err)
+      }
+    }
+    load()
+  }, [])
 
   const educationalResources = [
     {
@@ -105,6 +129,34 @@ export default function ResourcesPage() {
               className="pl-10"
             />
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Local resources (proximity) */}
+      <Card className="apple-card">
+        <CardHeader>
+          <CardTitle>Nearby Resources</CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-3 md:grid-cols-2">
+          {resources
+            .filter((r) => r.name.toLowerCase().includes(searchQuery.toLowerCase()))
+            .map((res) => (
+              <div key={res.id} className="rounded-lg border p-3 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold">{res.name}</h3>
+                    <p className="text-xs text-muted-foreground">{res.category}</p>
+                  </div>
+                  <p className="text-xs text-muted-foreground">{res.distanceMiles.toFixed(1)} mi</p>
+                </div>
+                <p className="text-sm text-muted-foreground">{res.address}</p>
+                <p className="text-xs text-muted-foreground">Rating {res.rating}</p>
+                <Button variant="outline" size="sm" className="mt-2 w-full">
+                  View details
+                </Button>
+              </div>
+            ))}
+          {resources.length === 0 && <p className="text-sm text-muted-foreground">Loading resources...</p>}
         </CardContent>
       </Card>
 
