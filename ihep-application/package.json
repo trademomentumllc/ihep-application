@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "dev:turbo": "next dev",
+    "dev:turbo": "next dev --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -13,6 +13,17 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio"
+  },
+  "overrides": {
+    "@esbuild-kit/core-utils": {
+      "esbuild": "0.27.2"
+    },
+    "@esbuild-kit/esm-loader": {
+      "esbuild": "0.27.2"
+    },
+    "drizzle-kit": {
+      "esbuild": "0.27.2"
+    }
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -55,6 +66,8 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
+    "drizzle-orm": "^0.38.0",
+    "drizzle-zod": "^0.7.0",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.23.26",
     "input-otp": "^1.4.2",
@@ -62,6 +75,7 @@
     "lucide-react": "^0.562.0",
     "next": "16.1.1",
     "next-auth": "^4.24.13",
+    "postgres": "^3.4.0",
     "prisma": "^7.2.0",
     "react": "19.2.3",
     "react-chartjs-2": "^5.3.1",
@@ -75,13 +89,11 @@
     "three": "^0.182.0",
     "three-usdz-loader": "^1.0.9",
     "vaul": "^1.1.2",
-    "zod": "^4.2.1",
-    "drizzle-orm": "^0.38.0",
-    "drizzle-zod": "^0.7.0",
-    "postgres": "^3.4.0"
+    "zod": "^4.2.1"
   },
   "devDependencies": {
-    "drizzle-kit": "^0.30.0",
+    "@esbuild-kit/core-utils": "^3.3.2",
+    "@esbuild-kit/esm-loader": "^2.6.5",
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
@@ -89,6 +101,8 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
+    "drizzle-kit": "^0.31.8",
+    "esbuild": "^0.27.2",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
     "tailwindcss": "^4",

@@ -8,6 +8,8 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   output: 'standalone',
+  // Enable React Compiler for performance optimizations
+  reactCompiler: true,
   // Transpile Three.js and related packages for proper bundling
   transpilePackages: ['three', 'three-usdz-loader'],
   // Force correct repo root selection to avoid monorepo lockfile confusion
