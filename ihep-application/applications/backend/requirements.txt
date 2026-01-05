@@ -1,0 +1,89 @@
+# IHEP Healthcare API - Python Dependencies
+# HIPAA-compliant production requirements
+
+# Flask Web Framework
+Flask==3.1.2
+Werkzeug==3.1.4
+
+# WSGI Server for Production
+gunicorn==23.0.0
+
+# Rate Limiting (Security)
+Flask-Limiter==3.8.0
+
+# Input Validation (Security - prevent injection attacks)
+pydantic==2.10.3
+email-validator==2.2.0
+
+# Redis Client (Caching & Rate Limiting)
+redis==5.2.1
+hiredis==3.0.0  # C-based parser for performance
+
+# PostgreSQL Database
+psycopg2-binary==2.9.10
+
+# Google Cloud Platform
+google-cloud-aiplatform==1.77.0
+google-cloud-logging==3.11.3
+google-cloud-storage==2.19.0
+google-cloud-kms==3.7.0
+google-cloud-secret-manager==2.25.0
+
+# Security & Cryptography
+cryptography==46.0.3
+bcrypt==4.2.1
+filelock>=3.20.1  # Pinned for CVE-2025-68146 fix (TOCTOU symlink vulnerability)
+
+# HTTP Requests
+requests==2.32.5
+urllib3>=2.6.2  # Pinned for CVE-2025-66418 (decompression chain DoS), CVE-2025-66471 (streaming DoS)
+
+# Data Validation & Serialization
+marshmallow>=4.1.2  # Pinned for CVE-2025-68480 fix (DoS in Schema.load)
+
+# Environment Variables
+python-dotenv==1.0.1
+
+# Utilities
+python-dateutil==2.9.0.post0
+pytz==2024.2
+
+# Monitoring & Logging
+python-json-logger==3.2.1
+
+# CORS Support
+flask-cors==6.0.1
+
+# Health Checks
+py-healthcheck==1.10.1
+
+# Testing (Development)
+pytest==8.3.4
+pytest-cov==6.0.0
+pytest-mock==3.14.0
+httpx==0.28.1  # For async HTTP testing
+
+# Code Quality (Development)
+black==25.12.0
+flake8==7.1.1
+mypy==1.13.0
+pylint==3.3.2
+
+# Security Scanning (Development)
+bandit==1.8.0
+safety==3.2.11
+
+# ML Training Dependencies (for MedGemma fine-tuning)
+torch>=2.8.0  # Pinned for CVE-2025-32434 (RCE), CVE-2024-31580 (heap overflow), CVE-2024-31583 (use-after-free)
+transformers>=4.53.0  # Pinned for CVE-2024-11392/11393/11394 (deserialization RCE) and ReDoS fixes
+datasets>=2.16.0
+accelerate>=0.25.0
+peft>=0.7.0
+bitsandbytes>=0.41.0
+wandb>=0.16.0
+tensorboard>=2.15.0
+evaluate>=0.4.1
+scipy>=1.11.0
+pyyaml>=6.0
+tqdm>=4.66.3  # Pinned for CVE-2024-34062 fix (CLI injection)
+
