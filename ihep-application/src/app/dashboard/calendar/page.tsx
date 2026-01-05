@@ -23,7 +23,7 @@ type CalendarEvent = {
   datetime: string
   durationMinutes: number
   location: string
-  type: 'In-Person' | 'Telehealth'
+  type: 'in-person' | 'telehealth' | 'phone'
 }
 
 export default function CalendarPage() {
@@ -38,7 +38,7 @@ export default function CalendarPage() {
     date: '',
     time: '',
     duration: '30',
-    type: 'In-Person' as CalendarEvent['type'],
+    type: 'in-person' as CalendarEvent['type'],
     location: '',
     notes: ''
   })
@@ -91,7 +91,7 @@ export default function CalendarPage() {
       date: '',
       time: '',
       duration: '30',
-      type: 'In-Person',
+      type: 'in-person',
       location: '',
       notes: ''
     })
@@ -203,7 +203,7 @@ export default function CalendarPage() {
                   <Label htmlFor="appt-type">Appointment Type</Label>
                   <Select
                     value={appointmentData.type}
-                    onValueChange={(v) => setAppointmentData({ ...appointmentData, type: v })}
+                    onValueChange={(v) => setAppointmentData({ ...appointmentData, type: v as CalendarEvent['type'] })}
                   >
                     <SelectTrigger className="mt-1">
                       <SelectValue />
@@ -412,7 +412,7 @@ export default function CalendarPage() {
                     </div>
                     <span
                       className={`px-2 py-1 text-xs rounded-full ${
-                        appointment.type === 'Telehealth'
+                        appointment.type === 'telehealth'
                           ? 'bg-green-100 text-green-700'
                           : 'bg-blue-100 text-blue-700'
                       }`}
@@ -445,7 +445,7 @@ export default function CalendarPage() {
                     <Button variant="outline" size="sm" className="flex-1">
                       Cancel
                     </Button>
-                    {appointment.type === 'Telehealth' && (
+                    {appointment.type === 'telehealth' && (
                       <Button size="sm" className="flex-1 gradient-primary">
                         Join Video Call
                       </Button>
