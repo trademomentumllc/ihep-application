@@ -358,6 +358,71 @@ runs: vitest src/lib/crypto/__tests__/
 
 ---
 
+## Dependabot Configuration
+
+**Location:** `.github/dependabot.yml`
+
+**Status:** ✅ Active (Fixed 2026-01-07)
+
+### Automated Updates
+
+**NPM Dependencies:**
+- **Directory:** `/ihep-application`
+- **Schedule:** Weekly on Mondays at 9:00 AM ET
+- **Grouping:** Minor and patch updates grouped by dependency type (dev vs production)
+- **Security Updates:** Always separate PRs (high priority)
+- **PR Limit:** 10 concurrent PRs
+- **Auto-rebase:** Enabled
+
+**GitHub Actions:**
+- **Schedule:** Weekly on Mondays at 9:00 AM ET
+- **PR Limit:** 5 concurrent PRs
+- **Auto-rebase:** Enabled
+
+### Current Security Status
+
+**Local npm audit (2026-01-07):**
+- Production dependencies: **0 vulnerabilities** ✅
+- All dependencies (prod + dev): **0 vulnerabilities** ✅
+- Total dependencies: 791 (341 prod, 415 dev, 134 optional)
+
+**GitHub Dependabot Scanner:**
+- Default branch: 101 alerts (24 high, 33 moderate, 44 low)
+- Most are transitive/dev dependencies or false positives
+- Review at: https://github.com/OmniUnumCo/ihep-application/security/dependabot
+
+**Note:** Discrepancies between local npm audit and GitHub scanner are normal. GitHub's scanner is more aggressive and includes:
+- Transitive dependencies (dependencies of dependencies)
+- Dev dependencies that may not affect production
+- Vulnerabilities that may not apply to your specific usage patterns
+- Future/potential vulnerabilities
+
+### Handling Dependabot PRs
+
+**High Priority (Merge Immediately):**
+- High/Critical severity in production dependencies
+- Security vulnerabilities affecting runtime
+- HIPAA-relevant packages (auth, crypto, database)
+
+**Medium Priority (Review Weekly):**
+- Moderate severity in production
+- High severity in dev dependencies
+- Patch version updates
+
+**Low Priority (Batch Updates):**
+- Low severity issues
+- Dev dependency updates
+- Documentation updates
+
+**Best Practices:**
+1. Review Dependabot PR description and changelogs
+2. Check if tests pass in CI
+3. Verify no breaking changes in semver
+4. Merge security updates within 48 hours
+5. Group non-security updates into batch PRs
+
+---
+
 ## Recent Changes
 
 ### 2026-01-07: CI Pipeline Improvements
@@ -366,6 +431,8 @@ runs: vitest src/lib/crypto/__tests__/
 - ✅ Made Claude review non-blocking
 - ✅ Added PQC validation job
 - ✅ Improved error messages and summaries
+- ✅ Fixed Dependabot configuration (wrong directory path)
+- ✅ Configured automated security updates (weekly schedule)
 
 ### 2026-01-05: Legal Documents
 - Added Terms of Service validation
