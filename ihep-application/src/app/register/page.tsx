@@ -20,6 +20,8 @@ export default function RegisterPage() {
     phone: '',
     preferredContactMethod: 'email'
   })
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
+  const [acceptedPrivacy, setAcceptedPrivacy] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
@@ -28,6 +30,12 @@ export default function RegisterPage() {
     e.preventDefault()
     setIsLoading(true)
     setError('')
+
+    if (!acceptedTerms || !acceptedPrivacy) {
+      setError('You must accept the Terms of Service and Privacy Policy to create an account')
+      setIsLoading(false)
+      return
+    }
 
     try {
       const response = await fetch('/api/auth/register', {
@@ -145,14 +153,82 @@ export default function RegisterPage() {
               </Select>
             </div>
 
+            <div className="space-y-3 border-t pt-4">
+              <div className="flex items-start space-x-2">
+                <input
+                  type="checkbox"
+                  id="terms"
+                  checked={acceptedTerms}
+                  onChange={(e) => setAcceptedTerms(e.target.checked)}
+                  className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                  required
+                />
+                <Label htmlFor="terms" className="text-sm font-normal cursor-pointer">
+                  I have read and agree to the{' '}
+                  <Link
+                    href="/legal/terms"
+                    target="_blank"
+                    className="text-primary hover:underline font-medium"
+                  >
+                    Terms of Service
+                  </Link>
+                  <span className="text-red-600 ml-1">*</span>
+                </Label>
+              </div>
+
+              <div className="flex items-start space-x-2">
+                <input
+                  type="checkbox"
+                  id="privacy"
+                  checked={acceptedPrivacy}
+                  onChange={(e) => setAcceptedPrivacy(e.target.checked)}
+                  className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                  required
+                />
+                <Label htmlFor="privacy" className="text-sm font-normal cursor-pointer">
+                  I have read and agree to the{' '}
+                  <Link
+                    href="/legal/privacy"
+                    target="_blank"
+                    className="text-primary hover:underline font-medium"
+                  >
+                    Privacy Policy
+                  </Link>
+                  <span className="text-red-600 ml-1">*</span>
+                </Label>
+              </div>
+
+              <p className="text-xs text-gray-500">
+                By creating an account, you also acknowledge our{' '}
+                <Link
+                  href="/legal/ai-governance"
+                  target="_blank"
+                  className="text-primary hover:underline"
+                >
+                  AI Governance Policy
+                </Link>
+                {' '}and{' '}
+                <Link
+                  href="/legal/trust"
+                  target="_blank"
+                  className="text-primary hover:underline"
+                >
+                  Trust Statement
+                </Link>
+                .
+              </p>
+            </div>
+
             {error && (
-              <div className="text-red-600 text-sm">{error}</div>
+              <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md border border-red-200">
+                {error}
+              </div>
             )}
-            
-            <Button 
-              type="submit" 
-              className="gradient-primary w-full" 
-              disabled={isLoading}
+
+            <Button
+              type="submit"
+              className="gradient-primary w-full"
+              disabled={isLoading || !acceptedTerms || !acceptedPrivacy}
             >
               {isLoading ? 'Creating Account...' : 'Create Account'}
             </Button>

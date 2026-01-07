@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <footer className="bg-primary text-white py-8">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           <div>
             <h3 className="font-montserrat font-bold text-lg mb-4">{APP_NAME}</h3>
             <p className="text-sm text-gray-300">
@@ -83,17 +83,37 @@ const Footer = () => {
                   </Link>
                 </div>
               </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-montserrat font-bold text-md mb-4">Legal</h3>
+            <ul className="space-y-2 text-sm">
               <li>
                 <div>
-                  <Link href="/privacy">
+                  <Link href="/legal/terms">
+                    <div className="text-gray-300 hover:text-white cursor-pointer">Terms of Service</div>
+                  </Link>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <Link href="/legal/privacy">
                     <div className="text-gray-300 hover:text-white cursor-pointer">Privacy Policy</div>
                   </Link>
                 </div>
               </li>
               <li>
                 <div>
-                  <Link href="/terms">
-                    <div className="text-gray-300 hover:text-white cursor-pointer">Terms of Service</div>
+                  <Link href="/legal/ai-governance">
+                    <div className="text-gray-300 hover:text-white cursor-pointer">AI Governance</div>
+                  </Link>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <Link href="/legal/trust">
+                    <div className="text-gray-300 hover:text-white cursor-pointer">Trust Statement</div>
                   </Link>
                 </div>
               </li>
