@@ -1,0 +1,57 @@
+---
+# cPanel Git Version Control Deployment Configuration
+# Enables automated deployment to cPanel hosting via Git push
+# Documentation: https://docs.cpanel.net/knowledge-base/web-services/guide-to-git-version-control/
+
+deployment:
+  tasks:
+    # Install Node.js dependencies
+    - export DEPLOYPATH=/home/ihepapp/public_html
+    - /bin/cp -R * $DEPLOYPATH
+    - cd $DEPLOYPATH
+
+    # Install dependencies (skip if node_modules already exists)
+    - if [ ! -d "node_modules" ]; then npm install --production; fi
+
+    # Build Next.js application for production
+    - npm run build
+
+    # Set correct file permissions
+    - find $DEPLOYPATH -type d -exec chmod 755 {} \;
+    - find $DEPLOYPATH -type f -exec chmod 644 {} \;
+
+    # Create/update .htaccess for Next.js routing
+    - |
+      cat > $DEPLOYPATH/.htaccess << 'EOF'
+      # Force HTTPS
+      RewriteEngine On
+      RewriteCond %{HTTPS} off
+      RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+      # Proxy to Node.js application (if using Passenger or custom Node.js setup)
+      # Adjust port based on your cPanel Node.js configuration
+      RewriteCond %{REQUEST_FILENAME} !-f
+      RewriteCond %{REQUEST_FILENAME} !-d
+      RewriteRule ^(.*)$ http://localhost:3000/$1 [P,L]
+
+      # Security headers
+      Header always set X-Content-Type-Options "nosniff"
+      Header always set X-Frame-Options "SAMEORIGIN"
+      Header always set X-XSS-Protection "1; mode=block"
+      Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+      # Cache static assets
+      <FilesMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$">
+        Header set Cache-Control "max-age=31536000, public"
+      </FilesMatch>
+      EOF
+
+    # Restart Node.js application (method depends on your cPanel setup)
+    # Option 1: If using PM2
+    - if command -v pm2 &> /dev/null; then pm2 restart ihep-app || pm2 start npm --name "ihep-app" -- start; fi
+
+    # Option 2: If using Passenger (cPanel Node.js Application)
+    - if [ -f tmp/restart.txt ]; then touch tmp/restart.txt; else mkdir -p tmp && touch tmp/restart.txt; fi
+
+    # Clean up
+    - echo "Deployment completed at $(date)" >> $DEPLOYPATH/deployment.log
