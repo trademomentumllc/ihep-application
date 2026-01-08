@@ -425,7 +425,7 @@ runs: vitest src/lib/crypto/__tests__/
 
 ## Recent Changes
 
-### 2026-01-07: CI Pipeline Improvements
+### 2026-01-07: CI Pipeline Improvements & Critical Bug Fixes
 - ✅ Added comprehensive CI workflow
 - ✅ Fixed Claude Code Review with gh CLI installation
 - ✅ Made Claude review non-blocking
@@ -433,6 +433,11 @@ runs: vitest src/lib/crypto/__tests__/
 - ✅ Improved error messages and summaries
 - ✅ Fixed Dependabot configuration (wrong directory path)
 - ✅ Configured automated security updates (weekly schedule)
+- ✅ **CRITICAL:** Fixed TypeScript compilation errors (Apple provider, PQC decryption)
+- ✅ **CRITICAL:** Fixed Next.js build failures (environment variable handling)
+- ✅ **CRITICAL:** Configured vitest test infrastructure
+- ✅ Validated all 12 workflow YAML files
+- ✅ Verified 0 production security vulnerabilities
 
 ### 2026-01-05: Legal Documents
 - Added Terms of Service validation
