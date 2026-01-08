@@ -26,7 +26,8 @@
     },
     "drizzle-kit": {
       "esbuild": "0.27.2"
-    }
+    },
+    "preact": "10.28.2"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
