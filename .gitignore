@@ -6,7 +6,8 @@ terraform.tfstate.backup
 *.tfstate
 *.tfstate.*
 # Dependencies
-/node_modules/
+node_modules/
+**/node_modules/
 
 # Python virtual environments
 venv/
@@ -47,6 +48,13 @@ __pycache__/
 /.local/
 .replit
 cookies.txt
+
+# cPanel Deployment
+.env.cpanel
+.env.cpanel.*
+.cpanel-build/
+deployment.log
+*.deploy.log
 
 # Training libraries (cloned repos)
 /training/DeepSpeed/
