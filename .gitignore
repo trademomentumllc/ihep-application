@@ -41,20 +41,96 @@ __pycache__/
 /backup_debug/
 /terraform.zip
 
-# Local Config
+# Environment Variables & Secrets
+.env
+.env.*
 .env.local
-/.env
+.env.*.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+.env.staging
+.env.staging.local
+.env.cpanel
+.env.cpanel.*
+
+# Secret Files
+secrets.json
+secrets.*.json
+credentials.json
+service-account.json
+serviceAccount.json
+firebase-adminsdk-*.json
+.secret
+*.pem
+*.key
+*.p12
+*.pfx
+*.cer
+*.crt
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
+id_ecdsa
+id_ecdsa.*
+*.ppk
+.ssh/
+*.asc
+*.gpg
+
+# API Keys & Tokens
+.api-keys
+api-keys.txt
+*.apikey
+.token
+*.token
+github_token
+gitlab_token
+npm_token
+.npmrc
+.yarnrc
+
+# Cloud Provider Credentials
+.aws/
+.gcloud/
+.azure/
+gcloud-service-key.json
+google-credentials.json
+aws-credentials
+azure-credentials
+
+# Database Credentials
+database.yml
+database.*.yml
+.pgpass
+.my.cnf
+
+# Configuration Files with Secrets
 /.config/
 /.local/
 .replit
 cookies.txt
+session.json
 
 # cPanel Deployment
-.env.cpanel
-.env.cpanel.*
 .cpanel-build/
 deployment.log
 *.deploy.log
+
+# Docker Secrets
+docker-compose.override.yml
+docker-compose.*.override.yml
+.dockerenv
+
+# Kubernetes Secrets
+secret.yaml
+secret.yml
+*-secret.yaml
+*-secret.yml
 
 # Training libraries (cloned repos)
 /training/DeepSpeed/
