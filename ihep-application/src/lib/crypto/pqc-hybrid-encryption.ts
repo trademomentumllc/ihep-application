@@ -170,7 +170,11 @@ export class HybridEncryption {
 
     let plaintext: Uint8Array
     try {
-      plaintext = cipher.open(encrypted.nonce, encrypted.ciphertext)
+      const decrypted = cipher.open(encrypted.nonce, encrypted.ciphertext)
+      if (decrypted === null) {
+        throw new Error('Decryption failed: Invalid ciphertext or authentication tag')
+      }
+      plaintext = decrypted
     } catch (error) {
       throw new Error('Decryption failed: Invalid ciphertext or authentication tag')
     }
