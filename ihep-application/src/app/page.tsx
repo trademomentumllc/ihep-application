@@ -126,21 +126,42 @@ export default function InvestorLandingPage() {
           <p className="text-center text-gray-500 mb-12">All materials available for download. Password-protected materials upon request.</p>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { icon: '📄', title: 'One-Page Overview', desc: 'Quick introduction to IHEP\'s problem, solution, market opportunity, and funding ask. Perfect for first impressions.', size: 'PDF', href: '/docs/A%20Recursive%20Blueprint%20for%20a%20Global%20Problem.pdf' },
-              { icon: '📊', title: 'Investor Deck', desc: 'Comprehensive 10-12 slide presentation covering market opportunity, technology differentiation, financial projections, team, and investment terms.', size: 'PDF', href: '/docs/ihep-pitch-deck.pdf' },
-              { icon: '🏗️', title: 'Technical Architecture', desc: 'Detailed whitepaper covering digital twin technology, federated learning, morphogenetic framework, and NIST compliance architecture.', size: 'PDF', href: '/docs/IHEP%20System%20Architecture%20Document.pdf' },
-              { icon: '💰', title: 'Financial Model', desc: 'Phase I budget breakdown, 10-year financial projections, unit economics, and path to profitability. Conservative assumptions detailed.', size: 'PDF', href: '/docs/IHEP%20Comprehensive%20Financial%20Model.pdf' },
-              { icon: '🎯', title: 'Pilot Plan & Timeline', desc: 'Detailed Phase I implementation roadmap with milestones, success metrics, outcome measurement methodology, and measurable endpoints.', size: 'PDF', href: '/docs/IHEP%20Phase%20I%20Detailed%20Project%20Plan.pdf' },
-              { icon: '📋', title: 'Due Diligence Package', desc: 'Complete due diligence documentation for investor review including all key materials and supporting documents.', size: 'PDF', href: '/docs/IHEP%20Complete%20Due%20Diligence%20Package.pdf' },
-            ].map((doc) => (
-              <a key={doc.title} href={doc.href} target="_blank" rel="noopener noreferrer" className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition block">
-                <div className="text-3xl mb-3">{doc.icon}</div>
-                <h3 className="font-semibold mb-2">{doc.title}</h3>
-                <p className="text-sm text-gray-500 mb-3">{doc.desc}</p>
-                <div className="text-xs text-gray-400">{doc.size}</div>
-              </a>
-            ))}
+            <a href="/docs/A%20Recursive%20Blueprint%20for%20a%20Global%20Problem.pdf" target="_blank" rel="noopener noreferrer" className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition block">
+              <div className="text-3xl mb-3 text-teal-600">[DOC]</div>
+              <h3 className="font-semibold mb-2">One-Page Overview</h3>
+              <p className="text-sm text-gray-500 mb-3">Quick introduction to IHEP&apos;s problem, solution, market opportunity, and funding ask. Perfect for first impressions.</p>
+              <div className="text-xs text-gray-400">PDF</div>
+            </a>
+            <a href="/docs/ihep-pitch-deck.pdf" target="_blank" rel="noopener noreferrer" className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition block">
+              <div className="text-3xl mb-3 text-teal-600">[DECK]</div>
+              <h3 className="font-semibold mb-2">Investor Deck</h3>
+              <p className="text-sm text-gray-500 mb-3">Comprehensive 10-12 slide presentation covering market opportunity, technology differentiation, financial projections, team, and investment terms.</p>
+              <div className="text-xs text-gray-400">PDF</div>
+            </a>
+            <a href="/docs/IHEP%20System%20Architecture%20Document.pdf" target="_blank" rel="noopener noreferrer" className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition block">
+              <div className="text-3xl mb-3 text-teal-600">[ARCH]</div>
+              <h3 className="font-semibold mb-2">Technical Architecture</h3>
+              <p className="text-sm text-gray-500 mb-3">Detailed whitepaper covering digital twin technology, federated learning, morphogenetic framework, and NIST compliance architecture.</p>
+              <div className="text-xs text-gray-400">PDF</div>
+            </a>
+            <a href="/docs/IHEP%20Comprehensive%20Financial%20Model.pdf" target="_blank" rel="noopener noreferrer" className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition block">
+              <div className="text-3xl mb-3 text-teal-600">[FIN]</div>
+              <h3 className="font-semibold mb-2">Financial Model</h3>
+              <p className="text-sm text-gray-500 mb-3">Phase I budget breakdown, 10-year financial projections, unit economics, and path to profitability. Conservative assumptions detailed.</p>
+              <div className="text-xs text-gray-400">PDF</div>
+            </a>
+            <a href="/docs/IHEP%20Phase%20I%20Detailed%20Project%20Plan.pdf" target="_blank" rel="noopener noreferrer" className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition block">
+              <div className="text-3xl mb-3 text-teal-600">[PLAN]</div>
+              <h3 className="font-semibold mb-2">Pilot Plan and Timeline</h3>
+              <p className="text-sm text-gray-500 mb-3">Detailed Phase I implementation roadmap with milestones, success metrics, outcome measurement methodology, and measurable endpoints.</p>
+              <div className="text-xs text-gray-400">PDF</div>
+            </a>
+            <a href="/docs/IHEP%20Complete%20Due%20Diligence%20Package.pdf" target="_blank" rel="noopener noreferrer" className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition block">
+              <div className="text-3xl mb-3 text-teal-600">[DD]</div>
+              <h3 className="font-semibold mb-2">Due Diligence Package</h3>
+              <p className="text-sm text-gray-500 mb-3">Complete due diligence documentation for investor review including all key materials and supporting documents.</p>
+              <div className="text-xs text-gray-400">PDF</div>
+            </a>
           </div>
 
           <p className="text-center text-gray-500 text-sm mt-12">
@@ -225,7 +246,7 @@ export default function InvestorLandingPage() {
 
           <div className="grid md:grid-cols-3 gap-6 mb-12">
             <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-teal-600">
-              <h3 className="text-xl font-semibold text-teal-600 mb-3">💰 Funding Partnership</h3>
+              <h3 className="text-xl font-semibold text-teal-600 mb-3">Funding Partnership</h3>
               <p className="text-gray-600 mb-3">
                 <strong>Investment Opportunity:</strong> $3.5M Series Seed round at $12M pre-money valuation. Convertible note terms: 20% Series A discount, $15M cap, 6% interest, 24-month maturity.
               </p>
@@ -234,13 +255,13 @@ export default function InvestorLandingPage() {
               </p>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-teal-600">
-              <h3 className="text-xl font-semibold text-teal-600 mb-3">🏥 Healthcare System Partnership</h3>
+              <h3 className="text-xl font-semibold text-teal-600 mb-3">Healthcare System Partnership</h3>
               <p className="text-gray-600">
                 <strong>Phase I Pilot Sites:</strong> Seeking 2-4 healthcare systems in Miami/Orlando for 150-300 participant pilot. Pilot partners receive early access to platform, co-publication opportunities, revenue sharing on successful outcomes.
               </p>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-teal-600">
-              <h3 className="text-xl font-semibold text-teal-600 mb-3">🔬 Research Collaboration</h3>
+              <h3 className="text-xl font-semibold text-teal-600 mb-3">Research Collaboration</h3>
               <p className="text-gray-600 mb-3">
                 <strong>Academic Partners:</strong> Co-PI arrangements, data access agreements, joint publications. Platform offers unprecedented longitudinal dataset for HIV treatment research.
               </p>
