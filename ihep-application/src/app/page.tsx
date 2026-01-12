@@ -141,6 +141,9 @@ export default function InvestorLandingPage() {
                   </a>
                 </li>
               ))}
+              <li>
+                <a href="/investor-dashboard">Investor Dashboard</a>
+              </li>
             </ul>
             <a
               href="#newsletter"
@@ -173,6 +176,13 @@ export default function InvestorLandingPage() {
               >
                 Download Our Deck
               </a>
+            <a
+              href="/investor-dashboard"
+              className="secondary-button"
+              rel="noopener noreferrer"
+            >
+              View Investor Dashboard
+            </a>
             </div>
           </div>
         </section>
@@ -524,6 +534,9 @@ export default function InvestorLandingPage() {
                   <a href="#documents" onClick={(e) => handleAnchor(e, 'documents')}>
                     Technical Architecture
                   </a>
+                </li>
+                <li>
+                  <a href="/investor-dashboard">Investor Dashboard</a>
                 </li>
                 <li>
                   <a href="#documents" onClick={(e) => handleAnchor(e, 'documents')}>
