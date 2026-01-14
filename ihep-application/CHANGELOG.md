@@ -5,6 +5,14 @@ All notable changes to the IHEP Application will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### 🔒 Security
+- Updated `aiohttp` to `>=3.13.3` in `swarm/requirements.txt` to address recent directory traversal, request smuggling, and parser DoS/CSS advisories.
+- Raised `Werkzeug` floor to `>=3.1.6` across backend and wandb snapshot requirement manifests to cover safe_join Windows device handling fixes.
+- Confirmed `filelock>=3.20.3` remains in place for SoftFileLock TOCTOU mitigation across the same manifests.
+- Policy: all future commits and pushes must be cryptographically signed (verified signatures required on protected branches).
+
 ## [2.0.0] - 2026-01-07
 
 ### 🚀 Major Release - Security & Infrastructure Overhaul
