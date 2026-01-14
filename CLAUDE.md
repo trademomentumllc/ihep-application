@@ -5,13 +5,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Attribution
 
 **Author:** Jason M Jarmacz | Evolution Strategist | jason@ihep.app
-**Co-Author:** Claude by Anthropic
+**AI Contributors:** Various AI agents (credited per contribution)
 
-All commits to this repository should include both contributors in the commit message:
+All commits to this repository should include the human author and the AI agent responsible for the work:
 ```
 Authored-By: Jason M Jarmacz <jason@ihep.app>
-Co-Authored-By: Claude by Anthropic <noreply@anthropic.com>
+Co-Authored-By: <Agent Name> <noreply@anthropic.com>
 ```
+
+### Attribution Rules
+- Credit the specific AI agent that performed the work
+- When Claude (Claude Code, Claude Opus, Claude Sonnet, etc.) performs the work:
+  ```
+  Co-Authored-By: Claude by Anthropic <noreply@anthropic.com>
+  ```
+- When another agent performs the work, credit that agent by name:
+  ```
+  Co-Authored-By: <Agent Name> by <Provider> <noreply@provider.com>
+  ```
+- If multiple agents collaborate on a commit, include all contributors:
+  ```
+  Co-Authored-By: Claude by Anthropic <noreply@anthropic.com>
+  Co-Authored-By: <Other Agent> by <Provider> <noreply@provider.com>
+  ```
 
 ## Project Overview
 
