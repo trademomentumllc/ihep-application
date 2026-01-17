@@ -59,3 +59,50 @@ cookies.txt
 /training/trl/
 openusd/
 /SESSION_POLICIES.md
+
+# Vendor code - never commit these large directories
+three.js-master/
+OpenUSD/
+/models/medgemma-4b-it/
+
+# Large binary/model files
+*.usdz
+*.usda
+*.usdc
+*.glb
+*.gltf
+*.safetensors
+*.gguf
+*.bin
+*.ckpt
+*.pth
+*.pt
+
+# Signing keys (should be in secrets manager)
+id_github_signing
+id_github_signing.pub
+
+# W&B and ML artifacts
+wandb/
+**/wandb/
+mlruns/
+
+# IDE and editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+Thumbs.db
+ehthumbs.db
+
+# Legacy directories (explicitly excluded to prevent re-addition)
+app_backup/
+workspaces/
+Strategic_Intelligence/
+investor-dashboard/
+curriculum-backend/
+proposal-mailer/
+fragmented_database/
