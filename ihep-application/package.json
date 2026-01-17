@@ -1,8 +1,14 @@
 {
-  "name": "hiv-health-insights",
+  "name": "ihep-platform",
   "version": "2.0.0",
   "private": true,
+  "workspaces": [
+    "packages/*",
+    "hub/*",
+    "spokes/*"
+  ],
   "scripts": {
+    "turbo": "turbo",
     "dev": "next dev --webpack",
     "dev:turbo": "next dev --turbo",
     "build": "next build",

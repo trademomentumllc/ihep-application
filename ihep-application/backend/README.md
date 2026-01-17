@@ -1,1 +1,0 @@
-Backend placeholder matching architecture spec. Current microservices (e.g., ai_inference_service, patient_twin_service, iam_service, notification_service, resource_catalog_service) remain at repo root; migrate or symlink into this tree when consolidating backend.
