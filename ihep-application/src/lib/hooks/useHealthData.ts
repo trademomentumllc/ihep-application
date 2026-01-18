@@ -1,89 +1,57 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import {
-  getHealthSummary,
-  getHealthMetrics,
-  addHealthMetric,
-  getVitalSigns,
-  getMedicationAdherence,
-  getWellnessGoals,
-  createWellnessGoal,
-  updateWellnessGoal,
-} from '@/lib/api/wellness'
-import { HealthMetric, WellnessGoal } from '@/types/wellness'
+// lib/hooks/useHealthData.ts
+'use client';
 
-export function useHealthSummary(userId: string) {
-  return useQuery({
-    queryKey: ['healthSummary', userId],
-    queryFn: () => getHealthSummary(userId),
-    enabled: !!userId,
-  })
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+
+interface WellnessMetrics {
+  heartRate: number;
+  bloodPressureSystolic: number;
+  bloodPressureDiastolic: number;
+  oxygenSaturation: number;
+  temperature: number;
+  viralLoad?: number;
+  cd4Count?: number;
+  lastUpdated: string;
 }
 
-export function useHealthMetrics(userId: string, type?: string) {
-  return useQuery({
-    queryKey: ['healthMetrics', userId, type],
-    queryFn: () => getHealthMetrics(userId, type),
-    enabled: !!userId,
-  })
-}
+export function useHealthData() {
+  const { user } = useAuth();
+  const [metrics, setMetrics] = useState<WellnessMetrics | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-export function useAddHealthMetric() {
-  const queryClient = useQueryClient()
+  const refreshMetrics = async () => {
+    if (!user) return;
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch('/api/health/metrics', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch health metrics');
+      }
+      
+      const data = await response.json();
+      setMetrics(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  return useMutation({
-    mutationFn: (data: Omit<HealthMetric, 'id' | 'recordedAt'>) => addHealthMetric(data),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['healthMetrics', variables.userId] })
-      queryClient.invalidateQueries({ queryKey: ['healthSummary', variables.userId] })
-    },
-  })
-}
+  useEffect(() => {
+    if (user) {
+      refreshMetrics();
+    }
+  }, [user]);
 
-export function useVitalSigns(userId: string) {
-  return useQuery({
-    queryKey: ['vitalSigns', userId],
-    queryFn: () => getVitalSigns(userId),
-    enabled: !!userId,
-  })
-}
-
-export function useMedicationAdherence(userId: string) {
-  return useQuery({
-    queryKey: ['medicationAdherence', userId],
-    queryFn: () => getMedicationAdherence(userId),
-    enabled: !!userId,
-  })
-}
-
-export function useWellnessGoals(userId: string) {
-  return useQuery({
-    queryKey: ['wellnessGoals', userId],
-    queryFn: () => getWellnessGoals(userId),
-    enabled: !!userId,
-  })
-}
-
-export function useCreateWellnessGoal() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: (data: Omit<WellnessGoal, 'id' | 'progress'>) => createWellnessGoal(data),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['wellnessGoals', variables.userId] })
-      queryClient.invalidateQueries({ queryKey: ['healthSummary', variables.userId] })
-    },
-  })
-}
-
-export function useUpdateWellnessGoal() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<WellnessGoal> }) =>
-      updateWellnessGoal(id, data),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['wellnessGoals', data.userId] })
-      queryClient.invalidateQueries({ queryKey: ['healthSummary', data.userId] })
-    },
-  })
+  return { metrics, loading, error, refreshMetrics };
 }

@@ -1,1 +1,0 @@
-This directory mirrors the architecture spec for the frontend. The live Next.js App Router currently resides in ../src. Use this tree for alignment and future migrations; keep canonical code in src unless explicitly moved.
