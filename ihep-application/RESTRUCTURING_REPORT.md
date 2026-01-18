@@ -1,7 +1,56 @@
 # IHEP Hub-and-Spoke Restructuring Report
 
 **Date:** 2026-01-17
-**Commits:** 7404b7d, 882ac3d, a583539, 7690c64
+**Commits:** 7404b7d, 882ac3d, a583539, 7690c64, + restoration commits
+
+---
+
+## IMPORTANT: Restoration Notice
+
+During the initial cleanup phase, 63 files were incorrectly identified as legacy/duplicate and removed. These have been restored from git history. The following categories were affected:
+
+### Restored Files
+
+1. **Research Components** (restored to src/components/)
+   - `src/components/research/ResearchDashboard.tsx`
+   - `src/components/calendar/CalendarView.tsx`
+   - `src/components/digital-twin/TwinDashboard.tsx`
+
+2. **Simulation Library** (restored to src/lib/simulation/)
+   - `src/lib/simulation/cbf.ts` - Control Barrier Functions
+   - `src/lib/simulation/ekf.ts` - Extended Kalman Filter
+   - `src/lib/simulation/math.ts` - Mathematical utilities
+
+3. **Type Declarations** (restored to src/types/)
+   - `src/types/images.d.ts`
+   - `src/types/next-auth.d.ts`
+   - `src/types/storage.d.ts`
+   - `src/types/ws.d.ts`
+
+4. **Peer Mediator Curriculum** (restored to spokes/research/curriculum/)
+   - Full FastAPI backend for financial literacy curriculum
+
+5. **Strategic Intelligence** (restored and moved to docs/strategic-intelligence/)
+   - Business model documents
+   - Investment terms
+   - Market opportunity analysis
+   - Risk management frameworks
+   - Partnership proposals
+
+6. **Proposal Mailer** (restored and moved to spokes/notifications/investor-outreach/)
+   - Investor outreach email automation
+
+7. **Visualization JS Files** (restored to spokes/digital-twin/visualization/)
+   - `Digital_Twin_Renderer.js`
+   - `Three_Rendering_Engine.js`
+   - `dt-optimization.js`
+
+### OpenUSD Partnership Support
+
+The project maintains a partnership with OpenUSD. The following have been updated:
+- Removed `OpenUSD/` from .gitignore (clone into project as needed)
+- Removed USD file extensions (*.usdz, *.usda, *.usdc) from .gitignore
+- USD scene files are welcome in the repository
 
 ---
 
@@ -141,9 +190,14 @@ ihep-application/
 │   │   ├── financial/            # Financial health twin
 │   │   ├── social/               # Social determinants twin
 │   │   ├── synthesis/            # Twin aggregation
-│   │   └── visualization/        # 3D rendering
-│   ├── notifications/            # Notification service (Go)
+│   │   └── visualization/        # 3D rendering (Three.js)
+│   ├── notifications/            # Notification service
+│   │   ├── api/                  # Go notification service
+│   │   ├── investor-outreach/    # Proposal mailer (Python)
+│   │   └── templates/            # Email/SMS templates
 │   ├── research/                 # Research portal
+│   │   ├── api/                  # Research API
+│   │   └── curriculum/           # Peer mediator curriculum (FastAPI)
 │   ├── resources/                # Resource discovery
 │   ├── telehealth/               # Video & messaging
 │   └── wellness/                 # Health monitoring
@@ -176,6 +230,10 @@ ihep-application/
 │
 ├── configs/                      # Configuration files
 ├── docs/                         # Documentation
+│   ├── strategic-intelligence/   # Business strategy docs
+│   ├── architecture/             # System architecture
+│   ├── compliance/               # HIPAA, legal docs
+│   └── runbooks/                 # Operational guides
 ├── gcp/                          # GCP deployment
 ├── k8s/                          # Kubernetes manifests
 ├── public/                       # Static assets
