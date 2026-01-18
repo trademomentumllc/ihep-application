@@ -171,7 +171,61 @@ The project maintains a partnership with OpenUSD. The following have been update
 
 ---
 
-## 4. Current Directory Structure
+## 4. Hub-and-Spoke Architecture
+
+The directory structure implements a hub-and-spoke pattern where all spokes communicate through the central hub:
+
+```
+                                    ┌─────────────────┐
+                                    │    CALENDAR     │
+                                    │   appointments  │
+                                    └────────┬────────┘
+                                             │
+         ┌─────────────────┐                 │                 ┌─────────────────┐
+         │  DIGITAL-TWIN   │                 │                 │    WELLNESS     │
+         │  4-twin system  │                 │                 │  health metrics │
+         └────────┬────────┘                 │                 └────────┬────────┘
+                  │                          │                          │
+                  │           ┌──────────────┴──────────────┐           │
+                  │           │                             │           │
+                  ├───────────┤            HUB              ├───────────┤
+                  │           │                             │           │
+                  │           │  ┌───────────────────────┐  │           │
+                  │           │  │  gateway (API)        │  │           │
+                  │           │  │  auth (IAM/JWT)       │  │           │
+                  │           │  │  core (security)      │  │           │
+                  │           │  │  storage (DB)         │  │           │
+                  │           │  │  events (pubsub)      │  │           │
+                  │           │  └───────────────────────┘  │           │
+                  │           │                             │           │
+                  │           └──────────────┬──────────────┘           │
+                  │                          │                          │
+         ┌────────┴────────┐                 │                 ┌────────┴────────┐
+         │    RESEARCH     │                 │                 │    RESOURCES    │
+         │   curriculum    │                 │                 │   providers     │
+         └─────────────────┘                 │                 └─────────────────┘
+                                             │
+                                    ┌────────┴────────┐
+                                    │  NOTIFICATIONS  │
+                                    │  investor mail  │
+                                    └────────┬────────┘
+                                             │
+                                    ┌────────┴────────┐
+                                    │   TELEHEALTH    │
+                                    │  video/messaging│
+                                    └─────────────────┘
+```
+
+**Key Principles:**
+- **Hub** = Central infrastructure (gateway, auth, core, storage, events)
+- **Spokes** = Domain modules that ONLY communicate via the hub
+- **Omnidirectional Flow** = Any spoke can send/receive through the hub
+
+For detailed architecture documentation, see: [docs/architecture/HUB_AND_SPOKE_ARCHITECTURE.md](docs/architecture/HUB_AND_SPOKE_ARCHITECTURE.md)
+
+---
+
+## 5. Directory Structure
 
 ```
 ihep-application/
