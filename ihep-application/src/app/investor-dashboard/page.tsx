@@ -137,7 +137,7 @@ export default function InvestorDashboardPage() {
       datasets: [
         {
           label: 'ROI %',
-          data: financialData.roi_percent_trend,
+          data: [...financialData.roi_percent_trend] as number[],
           borderColor: '#1FB8CD',
           backgroundColor: 'rgba(31,184,205,0.1)',
           fill: true,
@@ -152,12 +152,12 @@ export default function InvestorDashboardPage() {
     () => ({
       labels: Array.from({ length: 10 }, (_, i) => `Year ${i + 1}`),
       datasets: [
-        { label: 'IHEP Core', data: financialData.funding_core, backgroundColor: '#1FB8CD' },
-        { label: 'Workforce Grants', data: financialData.funding_workforce, backgroundColor: '#FFC185' },
-        { label: 'Research Grants', data: financialData.funding_research, backgroundColor: '#B4413C' },
-        { label: 'CSR Partnerships', data: financialData.funding_csr, backgroundColor: '#ECEBD5' },
-        { label: 'Foundation', data: financialData.funding_foundation, backgroundColor: '#5D878F' },
-        { label: 'Commercial', data: financialData.funding_commercial, backgroundColor: '#DB4545' },
+        { label: 'IHEP Core', data: [...financialData.funding_core] as number[], backgroundColor: '#1FB8CD' },
+        { label: 'Workforce Grants', data: [...financialData.funding_workforce] as number[], backgroundColor: '#FFC185' },
+        { label: 'Research Grants', data: [...financialData.funding_research] as number[], backgroundColor: '#B4413C' },
+        { label: 'CSR Partnerships', data: [...financialData.funding_csr] as number[], backgroundColor: '#ECEBD5' },
+        { label: 'Foundation', data: [...financialData.funding_foundation] as number[], backgroundColor: '#5D878F' },
+        { label: 'Commercial', data: [...financialData.funding_commercial] as number[], backgroundColor: '#DB4545' },
       ],
     }),
     [],

@@ -39,6 +39,13 @@ const documents: DocumentCard[] = [
     format: 'PDF',
   },
   {
+    href: '/docs/architecture/HUB_AND_SPOKE_ARCHITECTURE.md',
+    icon: '🔄',
+    title: 'Hub-and-Spoke Architecture',
+    desc: 'Complete technical architecture showing how IHEP uses a central hub with domain spokes for omnidirectional data flow and HIPAA compliance.',
+    format: 'Markdown',
+  },
+  {
     href: '/docs/IHEP%20System%20Architecture%20Document.pdf',
     icon: '🏗️',
     title: 'Technical Architecture',
@@ -531,16 +538,37 @@ export default function InvestorLandingPage() {
                   </a>
                 </li>
                 <li>
-                  <a href="#documents" onClick={(e) => handleAnchor(e, 'documents')}>
-                    Technical Architecture
-                  </a>
-                </li>
-                <li>
                   <a href="/investor-dashboard">Investor Dashboard</a>
                 </li>
                 <li>
                   <a href="#documents" onClick={(e) => handleAnchor(e, 'documents')}>
                     FAQ
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div className="footer-section">
+              <h4>Architecture</h4>
+              <ul>
+                <li>
+                  <a href="/docs/architecture/HUB_AND_SPOKE_ARCHITECTURE.md">
+                    Hub-and-Spoke Design
+                  </a>
+                </li>
+                <li>
+                  <a href="/RESTRUCTURING_REPORT.md">
+                    System Structure
+                  </a>
+                </li>
+                <li>
+                  <a href="/docs/IHEP%20System%20Architecture%20Document.pdf">
+                    Technical Whitepaper
+                  </a>
+                </li>
+                <li>
+                  <a href="/docs/Phase_4_Deployment_Architecture_on_Google_Cloud_Platform.md">
+                    GCP Deployment
                   </a>
                 </li>
               </ul>
