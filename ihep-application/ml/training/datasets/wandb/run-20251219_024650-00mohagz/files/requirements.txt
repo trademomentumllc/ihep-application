@@ -6,7 +6,7 @@ sentry-sdk==2.48.0
 tzdata==2025.3
 pytz==2025.2
 pyarrow==22.0.0
-protobuf==6.33.2
+protobuf==6.33.4
 pydantic==2.12.5
 propcache==0.4.1
 networkx==3.6.1
