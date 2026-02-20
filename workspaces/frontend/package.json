@@ -22,7 +22,7 @@
     "three": "^0.162.0",
     "@react-three/fiber": "^8.17.10",
     "@react-three/drei": "^9.114.4",
-    "axios": "^1.13.2",
+    "axios": "^1.13.5",
     "swr": "^2.3.3",
     "zustand": "^5.0.3",
     "date-fns": "^4.1.0",
