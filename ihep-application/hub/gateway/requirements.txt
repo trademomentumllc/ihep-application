@@ -23,14 +23,14 @@ hiredis==3.0.0  # C-based parser for performance
 psycopg2-binary==2.9.10
 
 # Google Cloud Platform
-google-cloud-aiplatform==1.77.0
+google-cloud-aiplatform==1.133.0
 google-cloud-logging==3.11.3
 google-cloud-storage==2.19.0
 google-cloud-kms==3.7.0
 google-cloud-secret-manager==2.25.0
 
 # Security & Cryptography
-cryptography==46.0.3
+cryptography==46.0.5
 bcrypt==4.2.1
 filelock>=3.20.3  # Patched CVE-2026-22701 (SoftFileLock TOCTOU)
 
